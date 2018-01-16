@@ -11,6 +11,8 @@
 
 // User libraries
 
+
+
 int main(void)
 {
     BOARD_Init();
@@ -20,7 +22,7 @@ int main(void)
     // Sort the array in place.
     int i, j;
     for (i = 0; i < 5; i++) {
-        // 43,187,222,226,99
+        // 57,96,100,217,220
         int aTemp = valsToBeSorted[i];
         for (j = i - 1; j >= 0; j--) {
             if (valsToBeSorted[j] <= aTemp)
