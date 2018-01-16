@@ -19,6 +19,11 @@ int main(void)
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
 
+    char f,c,k;
+f = 'F';
+c = 'C';
+k = 'K';
+
     // Declare Variables
     float kelvin, fahr;
     int lower, upper, step;
@@ -29,7 +34,7 @@ int main(void)
     step = 20; // step size
     kelvin = lower;
 
-    printf("    F     C\n");
+    printf("%5c %5c\n", f, c);
     // Print out table
     while (kelvin <= upper) {
         fahr = (5.0 / 9.0)*(kelvin - 32.0);
@@ -39,7 +44,7 @@ int main(void)
     }
 
     printf("\n");
-    printf("     K     F\n");
+    printf("%6c %5c\n", k, f);
     kelvin = lower;
     // Print out table
     while (kelvin <= upper) {
