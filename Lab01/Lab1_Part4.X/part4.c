@@ -13,6 +13,7 @@
 #include "OledDriver.h"
 
 int main(void) {
+    BOARD_Init();
     OledInit();
     OledDrawString("Hello, World!\n");
     OledUpdate();

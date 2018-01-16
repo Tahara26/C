@@ -11,7 +11,7 @@
 #include <plib.h>
 
 // User libraries
-
+#include "CMath.h"
 
 // **** Set macros and preprocessor directives ****
 
@@ -37,8 +37,13 @@ int main() {
         
         double mathAtan2=atan2(QX,QY);
         printf("Atan2 returned %f and should return %f\r\n",mathAtan2,.4918);
-          
-
+        
+        double myenorm=enorm(PX,PY,QX,QY);
+        printf("Enorm returned %f and should return %f\r\n",myenorm,6.9340);
+        
+        double myarctan=arctangent2(QX,QY);
+        printf("Arctan2 returned %f and should return %f\r\n",myarctan,.4918);
+        
         /*************************************************************************************************/
 
         // You can never return from main() in an embedded system (one that lacks an operating system).
