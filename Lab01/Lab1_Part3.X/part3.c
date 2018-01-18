@@ -35,13 +35,13 @@ int main() {
         double mathHypot=hypotf(DX,DY);
         printf("Hypot returned %f and should return %f\r\n",mathHypot,6.9340);
         
-        double mathAtan2=atan2(QX,QY);
+        double mathAtan2=atan2(QY,QX);
         printf("Atan2 returned %f and should return %f\r\n",mathAtan2,.4918);
         
         double myenorm=enorm(PX,PY,QX,QY);
         printf("Enorm returned %f and should return %f\r\n",myenorm,6.9340);
         
-        double myarctan=arctangent2(QX,QY);
+        double myarctan=arctangent2(QY,QX);
         printf("Arctan2 returned %f and should return %f\r\n",myarctan,.4918);
         
         /*************************************************************************************************/
