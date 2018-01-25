@@ -43,9 +43,12 @@ int their_main(void)
     char oper;
     char garbage;
     float x, y;
+    // Opening greeting the User
     printf("Welcome to Justin's calculator program!\n");
     while (1) {
+        // Message for mathematical operation
         printf("Enter a mathematical operation to perform (*,/,+,-,v,a,c,f,t,r):");
+        // Scans the user input
         scanf("%c%c", &oper, &garbage);
 
         // Addition 
@@ -55,21 +58,24 @@ int their_main(void)
             printf("Enter the second operand:");
             scanf("%f%c", &y, &garbage);
             printf("Result of (%f + %f): %f\n", x, y, x + y);
-        }// Subtraction
+        }
+        // Subtraction
         else if (oper == '-') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Enter the second operand:");
             scanf("%f%c", &y, &garbage);
             printf("Result of (%f - %f): %f\n", x, y, x - y);
-        }// Multiplication
+        }
+        // Multiplication
         else if (oper == '*') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Enter the second operand:");
             scanf("%f%c", &y, &garbage);
             printf("Result of (%f * %f): %f\n", x, y, x * y);
-        }// Division
+        }
+        // Division
         else if (oper == '/') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
@@ -80,39 +86,47 @@ int their_main(void)
                 continue;
             }
             printf("Result of (%f / %f): %f\n", x, y, x / y);
-        }// Average
+        }
+        // Average
         else if (oper == 'v') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Enter the second operand:");
             scanf("%f%c", &y, &garbage);
             printf("Result of (%f v %f): %f\n", x, y, Average(x, y));
-        }// Absolute Value
+        }
+        // Absolute Value
         else if (oper == 'a') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Result of AbsoluteValue(%f): %f\n", x, AbsoluteValue(x));
-        }// Fahrenheit to Celsius
+        }
+        // Fahrenheit to Celsius
         else if (oper == 'c') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Result of %f deg->C: %f\n", x, FahrenheitToCelsius(x));
-        }// Celsius to Fahrenheit
+        }
+        // Celsius to Fahrenheit
         else if (oper == 'f') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Result of %f deg->F: %f\n", x, CelsiusToFahrenheit(x));
-        }// Tangent
+        }
+        // Tangent
         else if (oper == 't') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Result of tan(%f): %f\n", x, Tangent(x));
-        }// Round
+        }
+        // Round
         else if (oper == 'r') {
             printf("Enter the first operand:");
             scanf("%f%c", &x, &garbage);
             printf("Result of round(%f): %f\n", x, Round(x));
-        } else {
+        }
+        // Error message if the first input was not a valid input from the user
+        else {
             printf("Error, not a valid operator\n");
         }
     }
@@ -184,6 +198,6 @@ double Tangent(double operand)
 
 double Round(double operand)
 {
-    return operand;
+     return (operand >= 0) ? (int)(operand + 0.5) : (int)(operand - 0.5);
 }
 
