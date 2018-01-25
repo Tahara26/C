@@ -129,7 +129,7 @@ int their_main(void)
 double AbsoluteValue(double operand)
 {
     if (operand < 0) {
-        operand = operand*-1;
+        operand = (operand)*(-1);
     }
     return operand;
 }
@@ -184,8 +184,6 @@ double Tangent(double operand)
 
 double Round(double operand)
 {
-    double x;
-    x= roundf(operand);
-    return x;
+    return operand;
 }
 
