@@ -25,9 +25,9 @@
  *                it isn't and TRUE if it is.
  */
 struct Stack {
-	float stackItems[STACK_SIZE];
-	int currentItemIndex;
-	uint8_t initialized;
+    float stackItems[STACK_SIZE];
+    int currentItemIndex;
+    uint8_t initialized;
 };
 
 /**

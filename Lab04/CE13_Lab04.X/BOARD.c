@@ -76,7 +76,8 @@ void SERIAL_Init(void);
  * @return None
  * @brief Initializes the board for 80MHz SYSCLK and 20MHz PBCLK.
  */
-void BOARD_Init() {
+void BOARD_Init()
+{
     // Set the PB divider to its maximum before altering SYSCLK, ensure that PB limits are observed
     OSCSetPBDIV(OSC_PB_DIV_8);
 
@@ -105,9 +106,9 @@ void BOARD_Init() {
     srand(seed2);
 
     //enables the interrupt system in the new style
-    
+
     //INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
-    
+
     unsigned int val;
 
     // set the CP0 cause IV bit high
@@ -115,7 +116,7 @@ void BOARD_Init() {
     val |= 0x00800000;
     asm volatile("mtc0   %0,$13" : "+r"(val));
     INTCONSET = _INTCON_MVEC_MASK;
-    
+
     //INTEnableInterrupts();
     int status;
     asm volatile("ei    %0" : "=r"(status));
@@ -130,7 +131,8 @@ void BOARD_Init() {
  * @brief shuts down all peripherals except for serial and A/D. Turns all pins
  * into input
  * @author Max Dunne, 2013.09.20  */
-void BOARD_End() {
+void BOARD_End()
+{
 
     // set all interrupt enable flags to zero
     IEC0 = 0;
@@ -188,7 +190,8 @@ void BOARD_End() {
  * @param None
  * @return
  */
-unsigned int BOARD_GetPBClock() {
+unsigned int BOARD_GetPBClock()
+{
     return PB_CLOCK;
 }
 
@@ -197,7 +200,8 @@ unsigned int BOARD_GetPBClock() {
  * @param None
  * @return
  */
-unsigned int BOARD_GetSysClock() {
+unsigned int BOARD_GetSysClock()
+{
     return SYSTEM_CLOCK;
 }
 
@@ -212,7 +216,8 @@ unsigned int BOARD_GetSysClock() {
  * @brief  Initializes the UART subsystem to 115200 and sets up the circular buffer
  * @author Max Dunne, 2011.11.10 */
 
-void SERIAL_Init(void) {
+void SERIAL_Init(void)
+{
 
     // we first clear the Configs Register to ensure a blank state and peripheral is off.
     U1MODE = 0;
@@ -258,7 +263,8 @@ void SERIAL_Init(void) {
 
 #ifndef LAB10_READ_OVERWRITE
 
-int read(int handle, void *buffer, unsigned int len) {
+int read(int handle, void *buffer, unsigned int len)
+{
     int i;
     if (handle == 0) {
         while (!U1STAbits.URXDA) {
@@ -288,7 +294,8 @@ int read(int handle, void *buffer, unsigned int len) {
 
 #ifdef BOARD_TEST
 
-int main(void) {
+int main(void)
+{
     BOARD_Init();
     printf("\r\nThis stub tests SERIAL Functionality with scanf");
     printf("\r\nIt will intake integers and divide by 2");

@@ -31,6 +31,7 @@
 #endif
 
 // Define some standard error codes.
+
 enum {
     SIZE_ERROR = -1,
     STANDARD_ERROR,
