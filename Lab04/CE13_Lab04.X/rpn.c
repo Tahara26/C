@@ -39,61 +39,163 @@ int their_main(void)
 #endif // LAB4_TESTING
 
     /******************************** Your custom code goes below here *******************************/
-    int i;
-    char string[61];
+
+    int i; // Made an integer so I can set all of the strings to Null before doing my code.
+    int error; // Just an integer for error handling later on
+    error = 0;
+    char string[61]; // 61 because of the return character
     char *token;
+    float out1;
+    float out2;
     float result;
-    float x;
-    float y;
     struct Stack stack;
     StackInit(&stack);
-
-    printf("Welcome to Justin's RPN calculator.\n");
-        printf("Enter floats and + - / * in RPN format:\n>");
-        for (i = 0; i < sizeof(string); i++) {
+    // Sets all the string values to null
+    for (i = 0; i < sizeof (string); i++) {
         string[i] = '\0';
     }
-        fgets(string, sizeof (string), stdin);
+
+    /* TEST CODE
+    struct Stack testStack;
+    StackInit(&testStack);
+    printf("Stack has %d elements!\n", StackGetSize(&testStack));
+    StackPush(&testStack, 3.14159);
+    printf("Stack has %d elements!\n", StackGetSize(&testStack));
+    float testFloat;
+    StackPop(&testStack, &testFloat);
+    printf("%f = 3.14159!\n", testFloat);
+    printf("Stack is empty: %d!\n", StackIsEmpty(&testStack));
+     */
+
+    // User greetings
+    printf("Welcome to Justin's RPN calculator.\n");
+    printf("Enter floats and + - / * in RPN format:\n>");
+    while (1) {
+
+        // Fgets to take in the user input
+        fgets(string, 61, stdin);
+        // Parsing the string
         token = strtok(string, " ");
+        StackInit(&stack);
+        error = 0;
+
+        // While loop for all of the calculations 
+        //Token has to not equal null so it can iterate through the code
         while (token != NULL) {
-            printf("%f\n", atof(token));
-            if (atof(token) != 0) {
-                StackPush(&stack, atof(token));
+
+            // Checks to see that the token is valid and also passes through a zero
+            if (atof(token) || *token == '0') {
+                // Push if a token but return STANDARD_ERROR if the stack is full    
+                if (StackPush(&stack, atof(token)) == STANDARD_ERROR) {
+                    printf("ERROR: No more room on the stack.\n>");
+                    error++;
+                    break;
+                }
             }
-            
+                // Have the tokens be popped into the stack 
+                // If either token is not a number return error
+                // If the stack is full return error as well
             else if (*token == '+') {
-                StackPop(&stack, &y);
-                StackPop(&stack, &x);
-                printf("%f %f", y, x);
-                result = x + y;
-                StackPush(&stack, result);
-                printf("Result: %5.2f", result);
+                if (StackPop(&stack, &out2) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPop(&stack, &out1) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPush(&stack, (out1 + out2)) == STANDARD_ERROR) {
+                    printf("ERROR: No more room on the stack.\n>");
+                    error++;
+                    break;
+                }
             }
-            /*
+
             else if (*token == '-') {
-                StackPop(&stack, &y);
-                StackPop(&stack, &x);
-                result = x - y;
-                StackPush(&stack, result);
-                printf("Result: %5.2f", result);
+                if (StackPop(&stack, &out2) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPop(&stack, &out1) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPush(&stack, (out1 - out2)) == STANDARD_ERROR) {
+                    printf("ERROR: No more room on the stack.\n>");
+                    error++;
+                    break;
+                }
+            } else if (*token == '/') {
+                if (StackPop(&stack, &out2) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPop(&stack, &out1) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                // Special case for dividing by zero because that is not a valid operation
+                if (out2 == 0.0) {
+                    printf("ERROR: Cannot divide by zero.\n>");
+                    error++;
+                    break;
+                }
+
+                if (StackPush(&stack, (out1 / out2)) == STANDARD_ERROR) {
+                    printf("ERROR: No more room on the stack.\n>");
+                    error++;
+                    break;
+                }
+            } else if (*token == '*') {
+                if (StackPop(&stack, &out2) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPop(&stack, &out1) == STANDARD_ERROR) {
+                    printf("ERROR: Not enough operands before operator.\n>");
+                    error++;
+                    break;
+                }
+                if (StackPush(&stack, (out1 * out2)) == STANDARD_ERROR) {
+                    printf("ERROR: No more room on the stack.\n>");
+                    error++;
+                    break;
+                }
             }
-            else if (*token == '/') {
-                StackPop(&stack, &y);
-                StackPop(&stack, &x);
-                result = x / y;
-                StackPush(&stack, result);
-                printf("Result: %5.2f", result);
+                // If the user input has letters it will be caught by this error handling
+            else {
+                printf("ERROR: Invalid character in RPN string.\n>");
+                error++;
+                break;
             }
-            else if (*token == '*') {
-                StackPop(&stack, &y);
-                StackPop(&stack, &x);
-                result = x * y;
-                StackPush(&stack, result);
-                printf("Result: %5.2f", result);
-            } */
+
             token = strtok(NULL, " ");
+
+        }
+        // Error handling to make sure not to print result after error message. Basically a flag
+        if (error == 1) {
+            continue;
         }
 
+        // Last check to see if there are less than one or more than one items on the stack
+        if (StackGetSize(&stack) != 1) {
+            printf("ERROR: Invalid RPN calculation: more or less than one item in the stack.\n>");
+            continue;
+        }
+
+        // Print result
+        StackPop(&stack, &result);
+        printf("Result: %.2f\n>", result);
+
+    }
+    
     /*************************************************************************************************/
 
     // You can never return from main() in an embedded system (one that lacks an operating system).

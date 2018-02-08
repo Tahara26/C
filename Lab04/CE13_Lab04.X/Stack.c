@@ -23,7 +23,7 @@ int StackPush(struct Stack *stack, float value)
         return STANDARD_ERROR;
     } else {
         (stack ->currentItemIndex)++;
-        stack ->stackItems[stack ->currentItemIndex];
+        stack ->stackItems[stack ->currentItemIndex] = value;
         return SUCCESS;
     }
 }
@@ -35,8 +35,8 @@ int StackPop(struct Stack *stack, float *value)
     } else if (stack ->currentItemIndex == -1) {
         return STANDARD_ERROR;
     } else {
-        
         *value = stack ->stackItems[stack ->currentItemIndex];
+        stack ->stackItems[stack ->currentItemIndex] = 0.0;
         (stack ->currentItemIndex)--;
         return SUCCESS;
     }
