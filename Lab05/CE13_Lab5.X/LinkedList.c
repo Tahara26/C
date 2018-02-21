@@ -159,26 +159,27 @@ int LinkedListSort(ListItem *list)
 
                 // If head is null just shift to the next item
                 if (head->data == NULL) {
+                    continue;
                     head = next;
                     next = next->nextItem;
                 }
 
                 // If next is null swap with the head and then shift to the next item
-                if (next->data == NULL) {
+                else if (next->data == NULL) {
                     LinkedListSwapData(head, next);
                     head = next;
                     next = next->nextItem;
                 }
 
                 // Checks the string length and if the next item is larger than the head swap and shift
-                if (strlen(head->data) > strlen(next->data)) {
+                else if (strlen(head->data) > strlen(next->data)) {
                     LinkedListSwapData(head, next);
                     head = next;
                     next = next->nextItem;
                 }
 
                 // If next is larger than head just shift
-                if (strlen(head->data) < strlen(next->data)) {
+                else if (strlen(head->data) < strlen(next->data)) {
                     head = next;
                     next = next->nextItem;
                 }
@@ -196,7 +197,7 @@ int LinkedListSort(ListItem *list)
 
                 // If head is null just shift to the next item
                 if (head->data == NULL) {
-                    break;
+                    continue;
                     head = next;
                     next = next->nextItem;
                 }                    // If next is null swap with the head and then shift to the next item
