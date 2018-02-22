@@ -40,45 +40,56 @@ int main(void)
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
 
+    uint8_t x;
+    uint8_t SwitchStored;
     ButtonsInit();
     LEDS_INIT();
     while (1) {
-        if (SWITCH_STATES() == 0x01 && BUTTON_EVENT_1UP){
+        if (buttonEvents != BUTTON_EVENT_NONE) {
+
+            SwitchStored = SWITCH_STATES();
+ 
+            if (((SwitchStored & SWITCH_STATE_SW1) == 1) && (buttonEvents & BUTTON_EVENT_1UP)) {  
+                x = LEDS_GET() ^ (0x03);
+                LEDS_SET(x);
+            } 
+            else if (((SwitchStored & SWITCH_STATE_SW1) == 0) && (buttonEvents & BUTTON_EVENT_1DOWN)) {
+                x = LEDS_GET() ^ (0x03);
+                LEDS_SET(x);
+            }
             
-            LEDS_SET();
-        }
-        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_1DOWN){
+            if (((SwitchStored & SWITCH_STATE_SW2) == 2) && (buttonEvents & BUTTON_EVENT_2UP)) {  
+                x = LEDS_GET() ^ (0x0C);
+                LEDS_SET(x);
+            } 
+            else if (((SwitchStored & SWITCH_STATE_SW2) == 0) && (buttonEvents & BUTTON_EVENT_2DOWN)) {
+                x = LEDS_GET() ^ (0x0C);
+                LEDS_SET(x);
+            }
             
-            LEDS_SET();
-        }
-        if (SWITCH_STATES() == 0x02 && BUTTON_EVENT_2UP){
+            if (((SwitchStored & SWITCH_STATE_SW3) == 4) && (buttonEvents & BUTTON_EVENT_3UP)) {  
+                x = LEDS_GET() ^ (0x30);
+                LEDS_SET(x);
+            } 
+            else if (((SwitchStored & SWITCH_STATE_SW3) == 0) && (buttonEvents & BUTTON_EVENT_3DOWN)) {
+                x = LEDS_GET() ^ (0x30);
+                LEDS_SET(x);
+            }
             
-            LEDS_SET();
-        }
-        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_2DOWN){
+            if (((SwitchStored & SWITCH_STATE_SW4) == 8) && (buttonEvents & BUTTON_EVENT_4UP)) {  
+                x = LEDS_GET() ^ (0xC0);
+                LEDS_SET(x);
+            } 
+            else if (((SwitchStored & SWITCH_STATE_SW4) == 0) && (buttonEvents & BUTTON_EVENT_4DOWN)) {
+                x = LEDS_GET() ^ (0xC0);
+                LEDS_SET(x);
+            }
             
-            LEDS_SET();
+            buttonEvents = BUTTON_EVENT_NONE;
         }
-        if (SWITCH_STATES() == 0x04 && BUTTON_EVENT_3UP){
-            
-            LEDS_SET();
-        }
-        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_3DOWN){
-            
-            LEDS_SET();
-        }
-        if (SWITCH_STATES() == 0x08 && BUTTON_EVENT_4UP){
-            
-            LEDS_SET();
-        }
-        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_4DOWN){
-            
-            LEDS_SET();
-        }
-        
     }
-    
-    
+
+
 
     /***************************************************************************************************
      * Your code goes in between this comment and the preceding one with asterisks
@@ -94,7 +105,7 @@ int main(void)
 void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
 {
     buttonEvents = ButtonsCheckEvents();
-    
+
     // Clear the interrupt flag.
     INTClearFlag(INT_T1);
 }

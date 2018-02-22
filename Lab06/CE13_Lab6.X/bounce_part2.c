@@ -19,7 +19,6 @@
 typedef struct AdcResult {
     uint8_t event;
     uint16_t value;
-    uint16_t percent;
 } AdcResult;
 
 // **** Define global, module-level, or external variables here ****
@@ -53,6 +52,11 @@ int main(void)
     /***************************************************************************************************
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
+    // Set a to 1023    
+    uint16_t a = 0x03FF;
+    
+    // Set b to 100
+    uint16_t b = 0x0064;
     
     // Sets up a string 
     char string[1000];
@@ -63,7 +67,7 @@ int main(void)
     // While loop that keeps updating to display the current value of the dial 
     while (1) {
         OledDrawString("Potentiometer value:\n");
-        sprintf(string,"\n%4d\n%3d%%",eventdata.value,eventdata.percent);
+        sprintf(string,"\n%4d\n%3d%%",eventdata.value, (((eventdata.value)*b)/a));
         OledDrawString(string);
         OledUpdate();
   }
@@ -86,14 +90,6 @@ void __ISR(_ADC_VECTOR, IPL2AUTO) AdcHandler(void)
 {
     // uint8_t values that are set at the beginning to use later on in the function 
     uint16_t i, j;
-    uint16_t a;
-    uint16_t b; 
-    
-    // Set a to 1023
-    a = 0x03FF;
-    
-    // Set b to 100
-    b = 0x0064;
        
     // Add up all the ADC values
     i = (ADC1BUF0+ADC1BUF1+ADC1BUF2+ADC1BUF3+ADC1BUF4+ADC1BUF5+ADC1BUF6+ADC1BUF7);
@@ -104,8 +100,7 @@ void __ISR(_ADC_VECTOR, IPL2AUTO) AdcHandler(void)
     // Checker for an event 
     if (eventdata.value != j) {
         eventdata.event = 1;
-        eventdata.value = j;
-        eventdata.percent = (j*b)/a;
+        eventdata.value = j; 
     }
     
     // Clear the interrupt flag.

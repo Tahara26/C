@@ -33,16 +33,18 @@ void ButtonsInit(void)
 uint8_t ButtonsCheckEvents(void)
 {
     static uint8_t save1, save2, save3, save4, save5;
-    
+    uint8_t result = BUTTON_EVENT_NONE;
+    static uint8_t result2;
+
     save5 = save4;
     save4 = save3;
     save3 = save2;
     save2 = save1;
     save1 = BUTTON_STATES();
-    
+
     //Hold all the samples in one number
-    uint32_t comb = 0x00000000; 
-    
+    uint32_t comb = 0x00000000;
+
     comb |= save5;
     comb = comb << 4;
     comb |= save4;
@@ -52,57 +54,32 @@ uint8_t ButtonsCheckEvents(void)
     comb |= save2;
     comb = comb << 4;
     comb |= save1;
-    
-    if (comb == Button_Event_None) {
-        return BUTTON_EVENT_NONE;
+
+
+    if (((comb & Button_Event_1) == Button_Event_1Down) && ((result2 & BUTTON_EVENT_1DOWN)) == 0) {
+        result |= BUTTON_EVENT_1DOWN;
+    } else if (((comb & Button_Event_1) == Button_Event_1Up) && ((result2 & BUTTON_EVENT_1UP)) == 0) {
+        result |= BUTTON_EVENT_1UP;
     }
-    
-    if (comb == Button_Event_1) {
-        return BUTTON_EVENT_NONE;
+
+    if (((comb & Button_Event_2) == Button_Event_2Down) && ((result2 & BUTTON_EVENT_2DOWN)) == 0) {
+        result |= BUTTON_EVENT_2DOWN;
+    } else if (((comb & Button_Event_2) == Button_Event_2Up) && ((result2 & BUTTON_EVENT_2UP)) == 0) {
+        result |= BUTTON_EVENT_2UP;
     }
-    
-    if (comb == Button_Event_2) {
-        return BUTTON_EVENT_NONE;
+
+    if (((comb & Button_Event_3) == Button_Event_3Down) && ((result2 & BUTTON_EVENT_3DOWN)) == 0) {
+        result |= BUTTON_EVENT_3DOWN;
+    } else if (((comb & Button_Event_3) == Button_Event_3Up) && ((result2 & BUTTON_EVENT_3UP)) == 0) {
+        result |= BUTTON_EVENT_3UP;
     }
-    
-    if (comb == Button_Event_3) {
-        return BUTTON_EVENT_NONE;
+
+    if (((comb & Button_Event_4) == Button_Event_4Down) && ((result2 & BUTTON_EVENT_4DOWN)) == 0) {
+        result |= BUTTON_EVENT_4DOWN;
+    } else if (((comb & Button_Event_4) == Button_Event_4Up) && ((result2 & BUTTON_EVENT_4UP)) == 0) {
+        result |= BUTTON_EVENT_4UP;
     }
-    
-    if (comb == Button_Event_4) {
-        return BUTTON_EVENT_NONE;
-    }
-    
-    if (comb == Button_Event_1Down) {
-        return BUTTON_EVENT_1DOWN;
-    }
-    
-    if (comb == Button_Event_1Up) {
-        return BUTTON_EVENT_1UP;
-    }
-    
-    if (comb == Button_Event_2Down) {
-        return BUTTON_EVENT_2DOWN;
-    }
-    
-    if (comb == Button_Event_2Up) {
-        return BUTTON_EVENT_2UP;
-    }
-    
-    if (comb == Button_Event_3Down) {
-        return BUTTON_EVENT_3DOWN;
-    }
-    
-    if (comb == Button_Event_3Up) {
-        return BUTTON_EVENT_3UP;
-    }
-    
-    if (comb == Button_Event_4Down) {
-        return BUTTON_EVENT_4DOWN;
-    }
-    
-    if (comb == Button_Event_4Up) {
-        return BUTTON_EVENT_4UP;
-    }
-    
+
+    result2 = result;
+    return result;
 }
