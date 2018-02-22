@@ -13,15 +13,6 @@
 
 #define LEDS_GET() LATE
    
-#define LEDS_SET(x) LATE = (x)
-
-#define LD1 PORTEbits.RE0
-#define LD2 PORTEbits.RE1
-#define LD3 PORTEbits.RE2
-#define LD4 PORTEbits.RE3
-#define LD5 PORTEbits.RE4
-#define LD6 PORTEbits.RE5
-#define LD7 PORTEbits.RE6
-#define LD8 PORTEbits.RE7
+#define LEDS_SET(x) (LATE = (x))
 
 #endif 

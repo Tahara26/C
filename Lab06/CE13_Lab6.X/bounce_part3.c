@@ -3,6 +3,8 @@
 
 //CMPE13 Support Library
 #include "BOARD.h"
+#include "Buttons.h"
+#include "Leds.h"
 
 // Microchip libraries
 #include <xc.h>
@@ -16,6 +18,7 @@
 // **** Declare any datatypes here ****
 
 // **** Define global, module-level, or external variables here ****
+static uint8_t buttonEvents;
 
 // **** Declare function prototypes ****
 
@@ -36,8 +39,46 @@ int main(void)
     /***************************************************************************************************
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
-    printf("Welcome to the Lab 6 Part 3 blank. Please remove before starting.");
 
+    ButtonsInit();
+    LEDS_INIT();
+    while (1) {
+        if (SWITCH_STATES() == 0x01 && BUTTON_EVENT_1UP){
+            
+            LEDS_SET();
+        }
+        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_1DOWN){
+            
+            LEDS_SET();
+        }
+        if (SWITCH_STATES() == 0x02 && BUTTON_EVENT_2UP){
+            
+            LEDS_SET();
+        }
+        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_2DOWN){
+            
+            LEDS_SET();
+        }
+        if (SWITCH_STATES() == 0x04 && BUTTON_EVENT_3UP){
+            
+            LEDS_SET();
+        }
+        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_3DOWN){
+            
+            LEDS_SET();
+        }
+        if (SWITCH_STATES() == 0x08 && BUTTON_EVENT_4UP){
+            
+            LEDS_SET();
+        }
+        else if (SWITCH_STATES() == 0x00 && BUTTON_EVENT_4DOWN){
+            
+            LEDS_SET();
+        }
+        
+    }
+    
+    
 
     /***************************************************************************************************
      * Your code goes in between this comment and the preceding one with asterisks
@@ -52,8 +93,8 @@ int main(void)
  */
 void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
 {
+    buttonEvents = ButtonsCheckEvents();
+    
     // Clear the interrupt flag.
     INTClearFlag(INT_T1);
-
-
 }

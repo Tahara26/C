@@ -44,28 +44,39 @@ int main(void)
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
 
+    // Initialize the LEDs
     LEDS_INIT();
-    uint8_t i, j, k;
-    j = 0x01;
-    LEDS_SET(j);
+    uint8_t i, j;
+    i = 0x01;
+    // Set the LEDs so the far right one is the only one on
+    LEDS_SET(i);
 
+    // Loop that keeps going in a cycle bouncing back and forth infinitely
     while (1) {
+        // Checks the event 
         if (eventdata.event) {
             eventdata.event = 0;
 
+            // If the far left LED is on then switch direction to right
             if (LEDS_GET() == 0x80) {
-                k = RIGHT;
+                j = RIGHT;
             }
+            
+            // If the far right LED is on then switch the direction to left
             if (LEDS_GET() == 0x01) {
-                k = LEFT;
+                j = LEFT;
             }
-            if (k == RIGHT) {
-                j = j >> 1;
-                LEDS_SET(j);
+            
+            // If the value was set to right then iterate the led to the right and set it
+            if (j == RIGHT) {
+                i = i >> 1;
+                LEDS_SET(i);
             }
-            if (k == LEFT) {
-                j = j << 1;
-                LEDS_SET(j);
+            
+            // If the value was set to right then iterate the led to the left and set it 
+            if (j == LEFT) {
+                i = i << 1;
+                LEDS_SET(i);
             }
         }
     }
@@ -86,12 +97,15 @@ int main(void)
  */
 void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
 {
+    // Iterate the value
     eventdata.value++;
 
+    // The checker for an event 
     if (eventdata.value >= SWITCH_STATES()) {
         eventdata.event = 1;
         eventdata.value = 0;
     }
+    
     // Clear the interrupt flag.
     INTClearFlag(INT_T1);
 
