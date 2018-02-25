@@ -3,6 +3,11 @@
 
 //CMPE13 Support Library
 #include "BOARD.h"
+#include "Buttons.h"
+#include "Leds.h"
+#include "Oled.h"
+#include "OledDriver.h"
+#include "Ascii.h"
 
 // Microchip libraries
 #include <xc.h>
@@ -15,7 +20,24 @@
 
 // **** Declare any datatypes here ****
 
+typedef struct TimerResult {
+    uint8_t event;
+    uint8_t value;
+} TimerResult;
+
+typedef struct AdcResult {
+    uint8_t event;
+    uint16_t value;
+} AdcResult;
+
 // **** Define global, module-level, or external variables here ****
+static TimerResult Eventdata;
+#define LEFT 1
+#define RIGHT 0
+
+static AdcResult eventdata;
+
+static uint8_t buttonEvents;
 
 // **** Declare function prototypes ****
 
@@ -56,7 +78,133 @@ int main(void)
     /***************************************************************************************************
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
-    printf("Welcome to the Lab 6 Extra Credit blank. Please remove before starting.");
+
+    // Initialize the LEDs
+    LEDS_INIT();
+    uint8_t i, j, k;
+    i = 0x00;
+                
+
+
+    // Set a to 1023    
+    uint16_t a = 0x03FF;
+
+    // Set b to 100
+    uint16_t b = 0x0064;
+
+    // Sets up a string 
+    char string[1000];
+
+    // Initializes the OLED
+    OledInit();
+
+    // x for setting the leds
+    uint8_t x;
+
+    // check with the enum
+    uint8_t SwitchStored;
+
+    // Initialize the Buttons
+    ButtonsInit();
+LEDS_SET(i);
+    // Loop that keeps going in a cycle bouncing back and forth infinitely
+    while (1) {
+
+        // While loop that keeps updating to display the current value of the dial 
+
+        OledDrawString("Potentiometer value:\n");
+        sprintf(string, "\n%4d\n%3d%%", eventdata.value, (((eventdata.value) * b) / a));
+        OledDrawString(string);
+        OledUpdate();
+        
+        // Checks the event 
+        if (Eventdata.event) {
+            Eventdata.event = 0;
+            // Set the LEDs so the far right one is the only one on
+            //LEDS_SET(i);
+            // If the far left LED is on then switch direction to right
+            if (LEDS_GET() == 0x80) {
+                j = RIGHT;
+            }
+
+            // If the far right LED is on then switch the direction to left
+            if ((LEDS_GET() == 0x01) || (LEDS_GET() == 0x00)) {
+                j = LEFT;
+            }
+
+            // If the value was set to right then iterate the led to the right and set it
+            if (j == RIGHT) {
+                i = i >> 1;
+                
+                //LEDS_SET(i);
+            }
+
+            // If the value was set to right then iterate the led to the left and set it 
+            if (j == LEFT) {
+                i = i << 1;
+                
+                //LEDS_SET(i);
+            }
+        }
+        
+        // The checker 
+        if (buttonEvents != BUTTON_EVENT_NONE) {
+
+            // Store the Switch State to a separate integer
+            SwitchStored = SWITCH_STATES();
+
+            // Check the first switch and do the corresponding actions for up and down
+            if (((SwitchStored & SWITCH_STATE_SW1) == 1) && (buttonEvents & BUTTON_EVENT_1UP)) {
+                x = LEDS_GET() ^ (0x03);
+                k = i | x;
+                LEDS_SET(k);
+            } else if (((SwitchStored & SWITCH_STATE_SW1) == 0) && (buttonEvents & BUTTON_EVENT_1DOWN)) {
+                x = LEDS_GET() ^ (0x03);
+                k = i | x;
+                LEDS_SET(k);
+            }
+
+            // Check the second switch and do the corresponding actions for up and down
+            if (((SwitchStored & SWITCH_STATE_SW2) == 2) && (buttonEvents & BUTTON_EVENT_2UP)) {
+                x = LEDS_GET() ^ (0x0C);
+                k = i | x;
+                LEDS_SET(k);
+            } else if (((SwitchStored & SWITCH_STATE_SW2) == 0) && (buttonEvents & BUTTON_EVENT_2DOWN)) {
+                x = LEDS_GET() ^ (0x0C);
+                k = i | x;
+                LEDS_SET(k);
+            }
+
+            // Check the third switch and do the corresponding actions for up and down
+            if (((SwitchStored & SWITCH_STATE_SW3) == 4) && (buttonEvents & BUTTON_EVENT_3UP)) {
+                x = LEDS_GET() ^ (0x30);
+                k = i | x;
+                LEDS_SET(k);
+            } else if (((SwitchStored & SWITCH_STATE_SW3) == 0) && (buttonEvents & BUTTON_EVENT_3DOWN)) {
+                x = LEDS_GET() ^ (0x30);
+                k = i | x;
+                LEDS_SET(k);
+            }
+
+            // Check the fourth switch and do the corresponding actions for up and down
+            if (((SwitchStored & SWITCH_STATE_SW4) == 8) && (buttonEvents & BUTTON_EVENT_4UP)) {
+                x = LEDS_GET() ^ (0xC0);
+                k = i | x;
+                LEDS_SET(k);
+            } else if (((SwitchStored & SWITCH_STATE_SW4) == 0) && (buttonEvents & BUTTON_EVENT_4DOWN)) {
+                x = LEDS_GET() ^ (0xC0);
+                k = i | x;
+                LEDS_SET(k);
+            }
+
+            // Clears the buttonEvents just in case
+            buttonEvents = BUTTON_EVENT_NONE;
+        }
+        
+    }
+
+
+
 
 
     /***************************************************************************************************
@@ -75,6 +223,17 @@ int main(void)
  */
 void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
 {
+    buttonEvents = ButtonsCheckEvents();
+
+    // Iterate the value
+    Eventdata.value++;
+
+    // The checker for an event 
+    if (Eventdata.value >= SWITCH_STATES()) {
+        Eventdata.event = 1;
+        Eventdata.value = 0;
+    }
+
     // Clear the interrupt flag.
     INTClearFlag(INT_T1);
 
@@ -88,8 +247,22 @@ void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
  */
 void __ISR(_ADC_VECTOR, IPL2AUTO) AdcHandler(void)
 {
+    // uint8_t values that are set at the beginning to use later on in the function 
+    uint16_t i, j;
+
+    // Add up all the ADC values
+    i = (ADC1BUF0 + ADC1BUF1 + ADC1BUF2 + ADC1BUF3 + ADC1BUF4 + ADC1BUF5 + ADC1BUF6 + ADC1BUF7);
+
+    // Divide by 8 to get value 
+    j = (i / 8);
+
+    // Checker for an event 
+    if (eventdata.value != j) {
+        eventdata.event = 1;
+        eventdata.value = j;
+    }
+
     // Clear the interrupt flag.
     INTClearFlag(INT_AD1);
-
 
 }

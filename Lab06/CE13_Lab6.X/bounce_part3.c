@@ -40,15 +40,24 @@ int main(void)
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
 
+    // x for setting the leds
     uint8_t x;
+    
+    // check with the enum
     uint8_t SwitchStored;
+    
+    // Initialize the Buttons and the LEDs
     ButtonsInit();
     LEDS_INIT();
+    
     while (1) {
+        // The checker 
         if (buttonEvents != BUTTON_EVENT_NONE) {
 
+            // Store the Switch State to a separate integer
             SwitchStored = SWITCH_STATES();
  
+            // Check the first switch and do the corresponding actions for up and down
             if (((SwitchStored & SWITCH_STATE_SW1) == 1) && (buttonEvents & BUTTON_EVENT_1UP)) {  
                 x = LEDS_GET() ^ (0x03);
                 LEDS_SET(x);
@@ -58,6 +67,7 @@ int main(void)
                 LEDS_SET(x);
             }
             
+            // Check the second switch and do the corresponding actions for up and down
             if (((SwitchStored & SWITCH_STATE_SW2) == 2) && (buttonEvents & BUTTON_EVENT_2UP)) {  
                 x = LEDS_GET() ^ (0x0C);
                 LEDS_SET(x);
@@ -67,6 +77,7 @@ int main(void)
                 LEDS_SET(x);
             }
             
+            // Check the third switch and do the corresponding actions for up and down
             if (((SwitchStored & SWITCH_STATE_SW3) == 4) && (buttonEvents & BUTTON_EVENT_3UP)) {  
                 x = LEDS_GET() ^ (0x30);
                 LEDS_SET(x);
@@ -76,6 +87,7 @@ int main(void)
                 LEDS_SET(x);
             }
             
+            // Check the fourth switch and do the corresponding actions for up and down
             if (((SwitchStored & SWITCH_STATE_SW4) == 8) && (buttonEvents & BUTTON_EVENT_4UP)) {  
                 x = LEDS_GET() ^ (0xC0);
                 LEDS_SET(x);
@@ -85,6 +97,7 @@ int main(void)
                 LEDS_SET(x);
             }
             
+            // Clears the buttonEvents just in case
             buttonEvents = BUTTON_EVENT_NONE;
         }
     }
@@ -104,6 +117,7 @@ int main(void)
  */
 void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
 {
+    // The checker 
     buttonEvents = ButtonsCheckEvents();
 
     // Clear the interrupt flag.

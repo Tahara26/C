@@ -234,7 +234,6 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -638,7 +637,7 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Simulator>
-      <item path="bounce_ec.c" ex="true" overriding="false">
+      <item path="bounce_ec.c" ex="false" overriding="false">
         <C32>
         </C32>
         <C32-AR>
@@ -680,7 +679,7 @@
         <C32Global>
         </C32Global>
       </item>
-      <item path="bounce_part3.c" ex="false" overriding="false">
+      <item path="bounce_part3.c" ex="true" overriding="false">
         <C32>
         </C32>
         <C32-AR>

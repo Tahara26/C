@@ -20,7 +20,7 @@ typedef struct TimerResult {
 } TimerResult;
 
 // **** Define global, module-level, or external variables here ****
-static TimerResult eventdata;
+static TimerResult Eventdata;
 #define LEFT 1
 #define RIGHT 0
 
@@ -54,8 +54,8 @@ int main(void)
     // Loop that keeps going in a cycle bouncing back and forth infinitely
     while (1) {
         // Checks the event 
-        if (eventdata.event) {
-            eventdata.event = 0;
+        if (Eventdata.event) {
+            Eventdata.event = 0;
 
             // If the far left LED is on then switch direction to right
             if (LEDS_GET() == 0x80) {
@@ -98,12 +98,12 @@ int main(void)
 void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
 {
     // Iterate the value
-    eventdata.value++;
+    Eventdata.value++;
 
     // The checker for an event 
-    if (eventdata.value >= SWITCH_STATES()) {
-        eventdata.event = 1;
-        eventdata.value = 0;
+    if (Eventdata.value >= SWITCH_STATES()) {
+        Eventdata.event = 1;
+        Eventdata.value = 0;
     }
     
     // Clear the interrupt flag.

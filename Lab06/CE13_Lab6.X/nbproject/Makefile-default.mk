@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=Ascii.c BOARD.c bounce_part3.c Oled.c OledDriver.c Buttons.c
+SOURCEFILES_QUOTED_IF_SPACED=Ascii.c BOARD.c bounce_ec.c Oled.c OledDriver.c Buttons.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Ascii.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/bounce_part3.o ${OBJECTDIR}/Oled.o ${OBJECTDIR}/OledDriver.o ${OBJECTDIR}/Buttons.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Ascii.o.d ${OBJECTDIR}/BOARD.o.d ${OBJECTDIR}/bounce_part3.o.d ${OBJECTDIR}/Oled.o.d ${OBJECTDIR}/OledDriver.o.d ${OBJECTDIR}/Buttons.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Ascii.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/bounce_ec.o ${OBJECTDIR}/Oled.o ${OBJECTDIR}/OledDriver.o ${OBJECTDIR}/Buttons.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Ascii.o.d ${OBJECTDIR}/BOARD.o.d ${OBJECTDIR}/bounce_ec.o.d ${OBJECTDIR}/Oled.o.d ${OBJECTDIR}/OledDriver.o.d ${OBJECTDIR}/Buttons.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Ascii.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/bounce_part3.o ${OBJECTDIR}/Oled.o ${OBJECTDIR}/OledDriver.o ${OBJECTDIR}/Buttons.o
+OBJECTFILES=${OBJECTDIR}/Ascii.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/bounce_ec.o ${OBJECTDIR}/Oled.o ${OBJECTDIR}/OledDriver.o ${OBJECTDIR}/Buttons.o
 
 # Source Files
-SOURCEFILES=Ascii.c BOARD.c bounce_part3.c Oled.c OledDriver.c Buttons.c
+SOURCEFILES=Ascii.c BOARD.c bounce_ec.c Oled.c OledDriver.c Buttons.c
 
 
 CFLAGS=
@@ -118,11 +118,11 @@ ${OBJECTDIR}/BOARD.o: BOARD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/BOARD.o 
 	@${FIXDEPS} "${OBJECTDIR}/BOARD.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Wall -MMD -MF "${OBJECTDIR}/BOARD.o.d" -o ${OBJECTDIR}/BOARD.o BOARD.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/bounce_part3.o: bounce_part3.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/bounce_ec.o: bounce_ec.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/bounce_part3.o.d 
-	@${RM} ${OBJECTDIR}/bounce_part3.o 
-	@${FIXDEPS} "${OBJECTDIR}/bounce_part3.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Wall -MMD -MF "${OBJECTDIR}/bounce_part3.o.d" -o ${OBJECTDIR}/bounce_part3.o bounce_part3.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
+	@${RM} ${OBJECTDIR}/bounce_ec.o.d 
+	@${RM} ${OBJECTDIR}/bounce_ec.o 
+	@${FIXDEPS} "${OBJECTDIR}/bounce_ec.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Wall -MMD -MF "${OBJECTDIR}/bounce_ec.o.d" -o ${OBJECTDIR}/bounce_ec.o bounce_ec.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
 ${OBJECTDIR}/Oled.o: Oled.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -155,11 +155,11 @@ ${OBJECTDIR}/BOARD.o: BOARD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/BOARD.o 
 	@${FIXDEPS} "${OBJECTDIR}/BOARD.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Wall -MMD -MF "${OBJECTDIR}/BOARD.o.d" -o ${OBJECTDIR}/BOARD.o BOARD.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/bounce_part3.o: bounce_part3.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/bounce_ec.o: bounce_ec.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/bounce_part3.o.d 
-	@${RM} ${OBJECTDIR}/bounce_part3.o 
-	@${FIXDEPS} "${OBJECTDIR}/bounce_part3.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Wall -MMD -MF "${OBJECTDIR}/bounce_part3.o.d" -o ${OBJECTDIR}/bounce_part3.o bounce_part3.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
+	@${RM} ${OBJECTDIR}/bounce_ec.o.d 
+	@${RM} ${OBJECTDIR}/bounce_ec.o 
+	@${FIXDEPS} "${OBJECTDIR}/bounce_ec.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -Wall -MMD -MF "${OBJECTDIR}/bounce_ec.o.d" -o ${OBJECTDIR}/bounce_ec.o bounce_ec.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
 ${OBJECTDIR}/Oled.o: Oled.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
