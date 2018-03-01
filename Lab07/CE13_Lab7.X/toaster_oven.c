@@ -142,6 +142,7 @@ int main()
         switch (oven.OvenState) {
 
         case RESET:
+            LEDS_SET(0x0);
             // If mode is bake 
             if (oven.CookingMode == BAKE) {
                 oven.InitialCookTime = initial1;
