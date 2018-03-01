@@ -142,7 +142,10 @@ int main()
         switch (oven.OvenState) {
 
         case RESET:
+
+            // Clears the Led
             LEDS_SET(0x0);
+
             // If mode is bake 
             if (oven.CookingMode == BAKE) {
                 oven.InitialCookTime = initial1;
@@ -194,13 +197,13 @@ int main()
                         OledDrawString(buffer);
                         OledUpdate();
                     }
-                }                    // Changing the time value for Toast
+                }// Changing the time value for Toast
                 else if (oven.CookingMode == TOAST) {
                     oven.InitialCookTime = ((AdcRead() >> 2) + 1);
                     DrawOven(TOASTOFF, buffer);
                     OledDrawString(buffer);
                     OledUpdate();
-                }                    // Changing the time value for Broil
+                }// Changing the time value for Broil
                 else if (oven.CookingMode == BROIL) {
                     oven.InitialCookTime = ((AdcRead() >> 2) + 1);
                     DrawOven(BROILOFF, buffer);
@@ -228,39 +231,40 @@ int main()
 
         case COUNTDOWN:
 
+            // Led setter for different values 
             if (oven.CookingTimeLeft >= 0) {
                 led = 0x00;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*1000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*1000) >> 3) {
                 led = 0x80;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*2000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*2000) >> 3) {
                 led = 0xC0;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*3000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*3000) >> 3) {
                 led = 0xE0;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*4000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*4000) >> 3) {
                 led = 0xF0;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*5000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*5000) >> 3) {
                 led = 0xF8;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*6000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*6000) >> 3) {
                 led = 0xFC;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*7000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*7000) >> 3) {
                 led = 0xFE;
             }
 
-            if ((oven.CookingTimeLeft*1000) >= ((oven.InitialCookTime)*8000) >> 3) {
+            if ((oven.CookingTimeLeft * 1000) >= ((oven.InitialCookTime)*8000) >> 3) {
                 led = 0xFF;
             }
 
@@ -289,13 +293,13 @@ int main()
                     DrawOven(BAKEON, buffer);
                     OledDrawString(buffer);
                     OledUpdate();
-                }                    // If Toast print toast on
+                }// If Toast print toast on
                 else if (oven.CookingMode == TOAST) {
                     OledClear(OLED_COLOR_BLACK);
                     DrawOven(TOASTON, buffer);
                     OledDrawString(buffer);
                     OledUpdate();
-                }                    // If Broil print broil on
+                }// If Broil print broil on
                 else if (oven.CookingMode == BROIL) {
                     OledClear(OLED_COLOR_BLACK);
                     DrawOven(BROILON, buffer);
@@ -331,7 +335,7 @@ int main()
                         DrawOven(BAKEOFF2, buffer);
                         OledDrawString(buffer);
                         OledUpdate();
-                    }                        // If state is at Temperature then move to time state
+                    }// If state is at Temperature then move to time state
                     else if (oven.InputSelection == TEMPERATURE) {
                         oven.InputSelection = TIME;
                         oven.CookingTimeLeft = oven.InitialCookTime;
@@ -341,10 +345,10 @@ int main()
                         OledUpdate();
                     }
                     oven.OvenState = START;
-                }                    // If Toast just move on 
+                }// If Toast just move on 
                 else if (oven.CookingMode == TOAST) {
                     oven.OvenState = START;
-                }                    // If Broil just move on 
+                }// If Broil just move on 
                 else if (oven.CookingMode == BROIL) {
                     oven.OvenState = START;
                 }
@@ -363,7 +367,7 @@ int main()
                     OledDrawString(buffer);
                     OledUpdate();
                     oven.CookingMode = TOAST;
-                }                    // If short press was done during toast mode it should move to Broil mode
+                }// If short press was done during toast mode it should move to Broil mode
                 else if (oven.CookingMode == TOAST) {
                     oven.InitialCookTime = initial1;
                     oven.CookingTimeLeft = oven.InitialCookTime;
@@ -372,7 +376,7 @@ int main()
                     OledDrawString(buffer);
                     OledUpdate();
                     oven.CookingMode = BROIL;
-                }                    // If short press was done during broil mode it should go back to Bake mode
+                }// If short press was done during broil mode it should go back to Bake mode
                 else if (oven.CookingMode == BROIL) {
                     oven.InitialCookTime = initial1;
                     oven.CookingTimeLeft = oven.InitialCookTime;
@@ -395,7 +399,7 @@ int main()
             if (buttonEvents == BUTTON_EVENT_4UP) {
                 buttonEvents = BUTTON_EVENT_NONE;
                 oven.OvenState = COUNTDOWN;
-            }                // Continue the countdown 
+            }// Continue the countdown 
             else if ((Timer2hz == TRUE) && (oven.CookingTimeLeft > 0)) {
 
                 // Decrement the timer
@@ -413,20 +417,20 @@ int main()
                     DrawOven(BAKEON, buffer);
                     OledDrawString(buffer);
                     OledUpdate();
-                }                    // If Toast print toast on
+                }// If Toast print toast on
                 else if (oven.CookingMode == TOAST) {
                     OledClear(OLED_COLOR_BLACK);
                     DrawOven(TOASTON, buffer);
                     OledDrawString(buffer);
                     OledUpdate();
-                }                    // If Broil print broil on
+                }// If Broil print broil on
                 else if (oven.CookingMode == BROIL) {
                     OledClear(OLED_COLOR_BLACK);
                     DrawOven(BROILON, buffer);
                     OledDrawString(buffer);
                     OledUpdate();
                 }
-            }                // If long press go to reset
+            }// If long press go to reset
             else if (oven.ButtonPressCounter >= LONG_PRESS) {
                 Timer2hz = FALSE;
                 oven.OvenState = RESET;
@@ -468,36 +472,51 @@ void __ISR(_TIMER_2_VECTOR, ipl4auto) TimerInterrupt100Hz(void)
 
 }
 
+// Custom oven drawing function 
 void DrawOven(oven_draw type, char *buffer)
 {
     switch (type) {
+
+        // Bake on case & led 
     case BAKEON:
         sprintf(buffer, "%s  Mode: Bake\n%s  Time:  %1d:%02d\n%s  Temp: %d%cF\n%s", line1, line3,
                 oven.CookingTimeLeft / 60, oven.CookingTimeLeft % 60, line4, oven.Temperature, 0xF8, line5);
         LEDS_SET(led);
         break;
+
+        // Bake off for time
     case BAKEOFF1:
         sprintf(buffer, "%s  Mode: Bake\n%s >Time:  %1d:%02d\n%s  Temp: %d%cF\n%s", line2, line3,
                 oven.InitialCookTime / 60, oven.InitialCookTime % 60, line4, oven.Temperature, 0xF8, line6);
         break;
+
+        // Bake off for temperature
     case BAKEOFF2:
         sprintf(buffer, "%s  Mode: Bake\n%s  Time:  %1d:%02d\n%s >Temp: %d%cF\n%s", line2, line3,
                 oven.InitialCookTime / 60, oven.InitialCookTime % 60, line4, oven.Temperature, 0xF8, line6);
         break;
+
+        // Toast on and led
     case TOASTON:
         sprintf(buffer, "%s  Mode: Toast\n%s  Time:  %1d:%02d\n%s\n%s", line2, line3,
                 oven.CookingTimeLeft / 60, oven.CookingTimeLeft % 60, line4, line5);
         LEDS_SET(led);
         break;
+
+        // Toast off 
     case TOASTOFF:
         sprintf(buffer, "%s  Mode: Toast\n%s  Time:  %1d:%02d\n%s\n%s", line2, line3,
                 oven.InitialCookTime / 60, oven.InitialCookTime % 60, line4, line6);
         break;
+
+        // Broil on and led 
     case BROILON:
         sprintf(buffer, "%s  Mode: Broil\n%s  Time:  %1d:%02d\n%s  Temp: 500%cF\n%s", line1, line3,
                 oven.CookingTimeLeft / 60, oven.CookingTimeLeft % 60, line4, 0xF8, line6);
         LEDS_SET(led);
         break;
+
+        // Broil off 
     case BROILOFF:
         sprintf(buffer, "%s  Mode: Broil\n%s  Time:  %1d:%02d\n%s  Temp: 500%cF\n%s", line2, line3,
                 oven.InitialCookTime / 60, oven.InitialCookTime % 60, line4, 0xF8, line6);
