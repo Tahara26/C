@@ -68,7 +68,7 @@ int MorseInit(void)
 char MorseDecode(MorseChar in)
 {
     
-    if (MorseChar == MORSE_CHAR_DOT) {
+    if (in == MORSE_CHAR_DOT) {
         if (copytree->leftChild != NULL) {
             return SUCCESS;
         }
@@ -76,7 +76,7 @@ char MorseDecode(MorseChar in)
             return NULL;
         }
     }
-    else if (MorseChar == MORSE_CHAR_DASH) {
+    else if (in == MORSE_CHAR_DASH) {
         if (copytree->rightChild != NULL) {
             return SUCCESS;
         }
@@ -84,10 +84,10 @@ char MorseDecode(MorseChar in)
             return NULL;
         }
     }
-    else if (MorseChar == MORSE_CHAR_END_OF_CHAR){
+    else if (in == MORSE_CHAR_END_OF_CHAR){
         
     }
-    else if (MorseChar == MORSE_CHAR_DECODE_RESET) {
+    else if (in == MORSE_CHAR_DECODE_RESET) {
         
     }
 }
