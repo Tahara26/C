@@ -4,7 +4,8 @@
  *
  * Created on March 2, 2018, 12:49 PM
  */
-
+#include <stdio.h>
+#include <stdlib.h>
 #include "BOARD.h"
 #include "xc.h"
 #include "Tree.h"
@@ -42,24 +43,29 @@
  * @return The head of the created tree or NULL if malloc fails for any node.
  */
 Node *TreeCreate(int level, const char *data){
-//    char* ptr = Node.data;
-//    if (data == DOT){
-//        ptr++;
-//    }
-//    else if ((data == DASH) && (level == 1)){
-//        ptr += 32;
-//    }
-//    else if ((data == DASH) && (level == 2)){
-//        ptr += 16;
-//    }
-//    else if ((data == DASH) && (level == 3)){
-//        ptr += 8;
-//    }
-//    else if ((data == DASH) && (level == 4)){
-//        ptr += 4;
-//    } 
-//    else if ((data == DASH) && (level == 5)){
-//        ptr += 2;
-//    }
-//    level++;
+    
+    Node *root = malloc(sizeof(Node));
+    
+    if (root == NULL) {
+        return NULL;
+    }
+    root->data = data[0];
+    
+    if (level == 1) {
+        root->leftChild = NULL;
+        root->rightChild = NULL;
+        return root;
+    }
+
+    if (level > 1){
+        root->leftChild = TreeCreate(level - 1, data + 1);
+        if (root->leftChild == NULL){
+            return NULL;
+        }
+        root->rightChild = TreeCreate(level - 1, data + (1<<(level-1)));
+        if (root->rightChild == NULL){
+            return NULL;
+        }
+    }
+    return root;
 }

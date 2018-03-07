@@ -1,6 +1,6 @@
 // **** Include libraries here ****
 // Standard C libraries
-
+#include <stdlib.h>
 
 //CMPE13 Support Library
 #include "BOARD.h"
@@ -10,7 +10,11 @@
 #include <plib.h>
 
 // User libraries
-
+#include "Leds.h"
+#include "Morse.h"
+#include "Oled.h"
+#include "Buttons.h"
+#include "Tree.h"
 
 // **** Set any macros or preprocessor directives here ****
 // Specify a bit mask for setting/clearing the pin corresponding to BTN4. Should only be used when
@@ -20,6 +24,7 @@
 // **** Declare any data types here ****
 
 // **** Define any module-level, global, or external variables here ****
+static MorseEvent morseEvents;
 
 // **** Declare any function prototypes here ****
 
@@ -42,8 +47,45 @@ int main()
 /******************************************************************************
  * Your code goes in between this comment and the following one with asterisks.
  *****************************************************************************/
-    printf("Welcome to the CMPE13 Lab8 blank. Please remove this line.");
-
+    
+    OledInit();
+    ButtonsInit();
+    
+//    while(1) {
+//        if(morseEvents == MORSE_EVENT_DOT){
+//            OledDrawString(".");
+//            OledUpdate();
+//        }
+//        else if(morseEvents == MORSE_EVENT_DASH){
+//            OledDrawString("-");
+//            OledUpdate();
+//        }
+////        else if(morseEvents == MORSE_EVENT_NONE){
+////            OledDrawString("#");
+////            OledUpdate();
+////        }
+//        //morseEvents = 0;
+//    }
+//    MorseInit();
+//    
+//    static Node *variable;
+//    
+//    const char Tree[] = {'#','E','I','S','H','5','4','V','#','3','U','F',
+//          '#','#','#','#','2','A','R','L','#','#','#','#','#','W','P','#','#',
+//          'J','#','1','T','N','D','B','6','#','X','#','#','K','C','#','#','Y',
+//          '#','#','M','G','Z','7','#','Q','#','#','O','#','8','#','#','9','0'};
+//    
+//    variable = TreeCreate(6, Tree);
+//    static Node *variable2;
+//    variable2 = variable;
+//    for(;variable != NULL; variable = variable->leftChild){
+//        printf("this should be my tree: %c\n", variable->data);
+//    }
+//    for(;variable2 != NULL; variable2 = variable2->rightChild){
+//        printf("this should be my tree: %c\n", variable2->data);
+//    }
+    
+   
 
 /******************************************************************************
  * Your code goes in between this comment and the preceding one with asterisks.
@@ -58,5 +100,5 @@ void __ISR(_TIMER_2_VECTOR, IPL4AUTO) TimerInterrupt100Hz(void)
     IFS0CLR = 1 << 8;
 
     //******** Put your code here *************//
-    
+    morseEvents = MorseCheckEvents();
 }

@@ -5,8 +5,22 @@
  * Created on March 2, 2018, 12:49 PM
  */
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include "Morse.h"
+#include "Tree.h"
+#include "Buttons.h"
 #include "xc.h"
+
+typedef enum {
+    WAITING,
+    DOT,
+    DASH,
+    INTER_LETTER
+} states;
+
+Node *tree;
+Node *copytree;
 
 /**
  * This function initializes the Morse code decoder. This is primarily the generation of the
@@ -16,9 +30,22 @@
  * successfully generated, SUCCESS is returned, otherwise STANDARD_ERROR is returned. This function
  * also initializes the Buttons library so that MorseCheckEvents() can work properly.
  * @return Either SUCCESS if the decoding tree was successfully created or STANDARD_ERROR if not.
- */ 
-int MorseInit(void){
-    
+ */
+int MorseInit(void)
+{
+    const char Tree[] = {'#', 'E', 'I', 'S', 'H', '5', '4', 'V', '#', '3', 'U', 'F',
+        '#', '#', '#', '#', '2', 'A', 'R', 'L', '#', '#', '#', '#', '#', 'W', 'P', '#', '#',
+        'J', '#', '1', 'T', 'N', 'D', 'B', '6', '#', 'X', '#', '#', 'K', 'C', '#', '#', 'Y',
+        '#', '#', 'M', 'G', 'Z', '7', '#', 'Q', '#', '#', 'O', '#', '8', '#', '#', '9', '0'};
+
+    tree = TreeCreate(6, Tree);
+    copytree = tree;
+    if (tree == NULL){
+        return STANDARD_ERROR;
+    }
+    else {
+        return SUCCESS;
+    }
 }
 
 /**
@@ -38,8 +65,31 @@ int MorseInit(void){
  *         hasn't been initialized, the next traversal location doesn't exist/represent a character,
  *         or `in` isn't a valid member of the MorseChar enum.
  */
-char MorseDecode(MorseChar in){
+char MorseDecode(MorseChar in)
+{
     
+    if (MorseChar == MORSE_CHAR_DOT) {
+        if (copytree->leftChild != NULL) {
+            return SUCCESS;
+        }
+        else {
+            return NULL;
+        }
+    }
+    else if (MorseChar == MORSE_CHAR_DASH) {
+        if (copytree->rightChild != NULL) {
+            return SUCCESS;
+        }
+        else {
+            return NULL;
+        }
+    }
+    else if (MorseChar == MORSE_CHAR_END_OF_CHAR){
+        
+    }
+    else if (MorseChar == MORSE_CHAR_DECODE_RESET) {
+        
+    }
 }
 
 /**
@@ -60,6 +110,59 @@ char MorseDecode(MorseChar in){
  * 
  * @return The MorseEvent that occurred.
  */
-MorseEvent MorseCheckEvents(void){
-    
+MorseEvent MorseCheckEvents(void)
+{
+    static uint16_t counter = 0;
+    static states state = WAITING;
+    static uint8_t buttonEvents;
+    buttonEvents = ButtonsCheckEvents();
+    counter++;
+    switch (state) {
+    case WAITING:
+        if (buttonEvents & BUTTON_EVENT_4DOWN) {
+            counter = 0;
+            state = DOT;
+            break;
+        }
+        break;
+
+    case DOT:
+        if (counter >= MORSE_EVENT_LENGTH_DOWN_DOT) {
+            state = DASH;
+        }
+        if (buttonEvents & BUTTON_EVENT_4UP) {
+            counter = 0;
+            state = INTER_LETTER;
+            return MORSE_EVENT_DOT;
+        }
+        break;
+
+    case DASH:
+        if (buttonEvents & BUTTON_EVENT_4UP) {
+            counter = 0;
+            state = INTER_LETTER;
+            return MORSE_EVENT_DASH;
+        }
+        break;
+
+    case INTER_LETTER:
+        if (counter >= MORSE_EVENT_LENGTH_UP_INTER_LETTER_TIMEOUT) {
+            state = WAITING;
+            return MORSE_EVENT_INTER_WORD;
+            break;
+        }
+        if (buttonEvents & BUTTON_EVENT_4DOWN) {
+            if (counter >= MORSE_EVENT_LENGTH_UP_INTER_LETTER) {
+                counter = 0;
+                state = DOT;
+                return MORSE_EVENT_INTER_LETTER;
+            } else {
+                counter = 0;
+                state = DOT;
+            }
+        }
+        break;
+
+        return MORSE_EVENT_NONE;
+    }
 }
