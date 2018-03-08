@@ -21,6 +21,7 @@ typedef enum {
 
 Node *tree;
 Node *copytree;
+Node *head;
 
 /**
  * This function initializes the Morse code decoder. This is primarily the generation of the
@@ -38,6 +39,11 @@ int MorseInit(void)
         'J', '#', '1', 'T', 'N', 'D', 'B', '6', '#', 'X', '#', '#', 'K', 'C', '#', '#', 'Y',
         '#', '#', 'M', 'G', 'Z', '7', '#', 'Q', '#', '#', 'O', '#', '8', '#', '#', '9', '0'};
 
+    const char Tree[] = {'\0', 'E', 'I', 'S', 'H', '5', '4', 'V', '\0', '3', 'U', 'F',
+        '\0', '\0', '\0', '\0', '2', 'A', 'R', 'L', '\0', '\0', '\0', '\0', '\0', 'W', 'P', '\0', '\0',
+        'J', '\0', '1', 'T', 'N', 'D', 'B', '6', '\0', 'X', '\0', '\0', 'K', 'C', '\0', '\0', 'Y',
+        '\0', '\0', 'M', 'G', 'Z', '7', '\0', 'Q', '\0', '\0', 'O', '\0', '8', '\0', '\0', '9', '0'};
+    
     tree = TreeCreate(6, Tree);
     copytree = tree;
     if (tree == NULL){
@@ -67,9 +73,10 @@ int MorseInit(void)
  */
 char MorseDecode(MorseChar in)
 {
-    
+    head = copytree;
     if (in == MORSE_CHAR_DOT) {
-        if (copytree->leftChild != NULL) {
+        copytree = copytree->leftChild;
+        if (copytree != NULL) {
             return SUCCESS;
         }
         else {
@@ -77,7 +84,8 @@ char MorseDecode(MorseChar in)
         }
     }
     else if (in == MORSE_CHAR_DASH) {
-        if (copytree->rightChild != NULL) {
+        copytree = copytree->rightChild;
+        if (copytree != NULL) {
             return SUCCESS;
         }
         else {
@@ -85,10 +93,10 @@ char MorseDecode(MorseChar in)
         }
     }
     else if (in == MORSE_CHAR_END_OF_CHAR){
-        
+        return copytree->data;
     }
     else if (in == MORSE_CHAR_DECODE_RESET) {
-        
+        copytree = head;
     }
 }
 

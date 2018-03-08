@@ -102,3 +102,16 @@ void __ISR(_TIMER_2_VECTOR, IPL4AUTO) TimerInterrupt100Hz(void)
     //******** Put your code here *************//
     morseEvents = MorseCheckEvents();
 }
+
+void cleartop(void) {
+    OledDrawString("\0");
+    OledUpdate();
+}
+
+void topline(void) {
+    
+}
+
+void bottomline(void) {
+    
+}
