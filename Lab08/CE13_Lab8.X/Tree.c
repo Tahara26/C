@@ -44,19 +44,26 @@
  */
 Node *TreeCreate(int level, const char *data){
     
+    // Gets the root 
     Node *root = malloc(sizeof(Node));
     
+    
+    // Checks to see if root is NULL
     if (root == NULL) {
         return NULL;
     }
+    
+    // Sets the root to the first data
     root->data = data[0];
     
+    // Check to see if we are at the bottom of the tree
     if (level == 1) {
         root->leftChild = NULL;
         root->rightChild = NULL;
         return root;
     }
 
+    // Move through the tree using recursion 
     if (level > 1){
         root->leftChild = TreeCreate(level - 1, data + 1);
         if (root->leftChild == NULL){

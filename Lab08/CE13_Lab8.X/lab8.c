@@ -20,14 +20,18 @@
 // Specify a bit mask for setting/clearing the pin corresponding to BTN4. Should only be used when
 // unit testing the Morse event checker.
 #define BUTTON4_STATE_FLAG (1 << 7)
+#define SPACE ' '
 
 // **** Declare any data types here ****
 
 // **** Define any module-level, global, or external variables here ****
 static MorseEvent morseEvents;
+static char string1[100];
 
 // **** Declare any function prototypes here ****
-
+static void cleartop(void);
+static void topline(char morse);
+static void bottomline(char letter);
 
 int main()
 {
@@ -44,52 +48,111 @@ int main()
     INTSetVectorSubPriority(INT_TIMER_2_VECTOR, INT_SUB_PRIORITY_LEVEL_0);
     INTEnable(INT_T2, INT_ENABLED);
 
-/******************************************************************************
- * Your code goes in between this comment and the following one with asterisks.
- *****************************************************************************/
-    
-    OledInit();
-    ButtonsInit();
-    
-//    while(1) {
-//        if(morseEvents == MORSE_EVENT_DOT){
-//            OledDrawString(".");
-//            OledUpdate();
-//        }
-//        else if(morseEvents == MORSE_EVENT_DASH){
-//            OledDrawString("-");
-//            OledUpdate();
-//        }
-////        else if(morseEvents == MORSE_EVENT_NONE){
-////            OledDrawString("#");
-////            OledUpdate();
-////        }
-//        //morseEvents = 0;
-//    }
-//    MorseInit();
-//    
-//    static Node *variable;
-//    
-//    const char Tree[] = {'#','E','I','S','H','5','4','V','#','3','U','F',
-//          '#','#','#','#','2','A','R','L','#','#','#','#','#','W','P','#','#',
-//          'J','#','1','T','N','D','B','6','#','X','#','#','K','C','#','#','Y',
-//          '#','#','M','G','Z','7','#','Q','#','#','O','#','8','#','#','9','0'};
-//    
-//    variable = TreeCreate(6, Tree);
-//    static Node *variable2;
-//    variable2 = variable;
-//    for(;variable != NULL; variable = variable->leftChild){
-//        printf("this should be my tree: %c\n", variable->data);
-//    }
-//    for(;variable2 != NULL; variable2 = variable2->rightChild){
-//        printf("this should be my tree: %c\n", variable2->data);
-//    }
-    
-   
+    /******************************************************************************
+     * Your code goes in between this comment and the following one with asterisks.
+     *****************************************************************************/
 
-/******************************************************************************
- * Your code goes in between this comment and the preceding one with asterisks.
- *****************************************************************************/
+    // Initialize Oled
+    OledInit();
+    
+    // Set all of the locations to space in the array
+    int i;
+    for(i=0; i<100; i++) {
+        string1[i] = SPACE;
+    }
+
+    // Check if MorseInit returns a Fatal error 
+    if (!MorseInit()) {
+        OledDrawString("Could not initialize");
+        OledUpdate();
+        FATAL_ERROR();
+    }
+    char x = '\0';
+
+    // Enter loop for all events 
+    while (1) {
+        if (morseEvents) {
+            
+            // For the Dot event
+            if (morseEvents == MORSE_EVENT_DOT) {
+                // Reset event
+                morseEvents = MORSE_EVENT_NONE;
+                
+                // If returned a standard error
+                if (MorseDecode(MORSE_CHAR_DOT) == STANDARD_ERROR) {
+                    
+                    // Reset decode, clear top, and print Pound
+                    MorseDecode(MORSE_CHAR_DECODE_RESET);
+                    cleartop();
+                    bottomline(MORSE_CHAR_END_OF_CHAR);
+                } else {
+                    // Print dot
+                    topline(MORSE_CHAR_DOT);
+                }
+            } 
+            
+            // For the Dash event
+            else if (morseEvents == MORSE_EVENT_DASH) {
+                // Reset event
+                morseEvents = MORSE_EVENT_NONE;
+                
+                // If returned a standard error
+                if (MorseDecode(MORSE_CHAR_DASH) == STANDARD_ERROR) {
+                    
+                    // Reset decode, clear top, and print Pound 
+                    MorseDecode(MORSE_CHAR_DECODE_RESET);
+                    cleartop();
+                    bottomline(MORSE_CHAR_END_OF_CHAR);
+                } else {
+                    // Print dash
+                    topline(MORSE_CHAR_DASH);
+                }
+            } 
+            
+            // For the inter letter event
+            else if (morseEvents == MORSE_EVENT_INTER_LETTER) {
+                // Reset event
+                morseEvents = MORSE_EVENT_NONE;
+                if ((x = MorseDecode(MORSE_CHAR_END_OF_CHAR)) > SUCCESS) {
+                    
+                    // Reset decode, clear top, and print letter
+                    MorseDecode(MORSE_CHAR_DECODE_RESET);
+                    cleartop();
+                    bottomline(x);
+                } else {
+                    
+                    // Reset decode, clear top, and print Pound
+                    MorseDecode(MORSE_CHAR_DECODE_RESET);
+                    cleartop();
+                    bottomline(MORSE_CHAR_END_OF_CHAR);
+                }
+            } 
+            
+            // For the inter letter word
+            else if (morseEvents == MORSE_EVENT_INTER_WORD) {
+                // Reset event
+                morseEvents = MORSE_EVENT_NONE;
+                if (((x = MorseDecode(MORSE_CHAR_END_OF_CHAR)) != STANDARD_ERROR) && ((x = MorseDecode(MORSE_CHAR_END_OF_CHAR)) != SUCCESS)) {
+                    
+                    // Reset decode, clear top, and print Word with space after it 
+                    MorseDecode(MORSE_CHAR_DECODE_RESET);
+                    cleartop();
+                    bottomline(x);
+                    bottomline(SPACE);
+                } else { 
+                    
+                    // Reset decode, clear top, and print Pound
+                    MorseDecode(MORSE_CHAR_DECODE_RESET);
+                    cleartop();
+                    bottomline(MORSE_CHAR_END_OF_CHAR);
+                }
+            }
+        }
+    }
+
+    /******************************************************************************
+     * Your code goes in between this comment and the preceding one with asterisks.
+     *****************************************************************************/
 
     while (1);
 }
@@ -103,15 +166,37 @@ void __ISR(_TIMER_2_VECTOR, IPL4AUTO) TimerInterrupt100Hz(void)
     morseEvents = MorseCheckEvents();
 }
 
-void cleartop(void) {
-    OledDrawString("\0");
+static void cleartop(void)
+{
+    // Iterate through the top of the array and clear it out 
+    int i;
+    for (i = 0; i < 21; i++) {
+        string1[i] = ' ';
+    }
+    OledDrawString(string1);
     OledUpdate();
 }
 
-void topline(void) {
+static void topline(char morse)
+{
+    // Look for space and iterate
+    int i = 0;
+    while (string1[i] != SPACE){
+        i++;
+    }
     
+    // Set string to morse
+    string1[i] = morse;
+    OledDrawString(string1);
+    OledUpdate();
 }
 
-void bottomline(void) {
-    
+static void bottomline(char letter)
+{
+    // Make static to skip spaces and just iterate
+    static int i = 21;
+    string1[i] = letter;
+    i++;
+    OledDrawString(string1);
+    OledUpdate();
 }

@@ -2,6 +2,8 @@ Justin Tahara
 
 Battle Boats Partner: Rayne Jones 
 
+I used a heap size of 3072.
+
 This lab we are using the button functions and the Oled on the Pic32 and we’re typing morse code with dots and dashes that are recognized by the code determining if the press was longer than a certain length of time. If there is a long pause between inputs you will also put a space on the Oled screen. I believe the most important part of the lab is setting up the tree and organizing how the recursion works and make sure that it would work. The lab manual goes over everything but does not really talk about the concept of recursion that is used in this lab. 
 
 I started by reading through the lab manual and downloading the files from canvas and setting up the lab by adding all the header files and the library. Then I began making the source files and the functions within them and kept testing if each function was working properly. Then I moved onto the lab8.c static functions that were needed at the bottom. Then I worked on the functions  in the main part of the source file and began the main code for the functions to work. The TreeCreate seemed to be wrong multiple times and needed fixing overtime and finally worked in the end. The MorseCheckEvents FSM was also a struggle to work correctly and finally the button presses worked. If I were to approach the lab differently I would also make test code first so that I can testy code more efficiently along the way. I asked many questions throughout the many lab sections there were during the week. 

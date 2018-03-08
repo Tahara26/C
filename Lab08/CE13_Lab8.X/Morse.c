@@ -19,9 +19,9 @@ typedef enum {
     INTER_LETTER
 } states;
 
-Node *tree;
-Node *copytree;
-Node *head;
+static Node *tree;
+static Node *copytree;
+
 
 /**
  * This function initializes the Morse code decoder. This is primarily the generation of the
@@ -34,18 +34,19 @@ Node *head;
  */
 int MorseInit(void)
 {
+    // Sets up the letters and spaces in the binary tree
     const char Tree[] = {'#', 'E', 'I', 'S', 'H', '5', '4', 'V', '#', '3', 'U', 'F',
         '#', '#', '#', '#', '2', 'A', 'R', 'L', '#', '#', '#', '#', '#', 'W', 'P', '#', '#',
         'J', '#', '1', 'T', 'N', 'D', 'B', '6', '#', 'X', '#', '#', 'K', 'C', '#', '#', 'Y',
         '#', '#', 'M', 'G', 'Z', '7', '#', 'Q', '#', '#', 'O', '#', '8', '#', '#', '9', '0'};
 
-    const char Tree[] = {'\0', 'E', 'I', 'S', 'H', '5', '4', 'V', '\0', '3', 'U', 'F',
-        '\0', '\0', '\0', '\0', '2', 'A', 'R', 'L', '\0', '\0', '\0', '\0', '\0', 'W', 'P', '\0', '\0',
-        'J', '\0', '1', 'T', 'N', 'D', 'B', '6', '\0', 'X', '\0', '\0', 'K', 'C', '\0', '\0', 'Y',
-        '\0', '\0', 'M', 'G', 'Z', '7', '\0', 'Q', '\0', '\0', 'O', '\0', '8', '\0', '\0', '9', '0'};
-    
+    // Makes the tree
     tree = TreeCreate(6, Tree);
+    
+    // Copies the tree for decode later
     copytree = tree;
+    
+    // Check if NULL
     if (tree == NULL){
         return STANDARD_ERROR;
     }
@@ -73,30 +74,52 @@ int MorseInit(void)
  */
 char MorseDecode(MorseChar in)
 {
-    head = copytree;
+    // See if its a dot
     if (in == MORSE_CHAR_DOT) {
-        copytree = copytree->leftChild;
-        if (copytree != NULL) {
+        // Making sure it is not at the bottom 
+        if (copytree->leftChild != NULL) {
+            // Traverse the tree to the left
+            copytree = copytree->leftChild;
             return SUCCESS;
         }
         else {
-            return NULL;
+            return STANDARD_ERROR;
         }
     }
-    else if (in == MORSE_CHAR_DASH) {
-        copytree = copytree->rightChild;
-        if (copytree != NULL) {
+    
+    // See if its a dash
+    else if (in == MORSE_CHAR_DASH) {    
+        // Making sure it is not at the bottom 
+        if (copytree->rightChild != NULL) {
+            // Traverse the tree to the right
+            copytree = copytree->rightChild;
             return SUCCESS;
         }
         else {
-            return NULL;
+            return STANDARD_ERROR;
         }
     }
+    
+    // Check if we are at the end of character
     else if (in == MORSE_CHAR_END_OF_CHAR){
+        // Making sure the head is not NULL
+        if (copytree->data != '\0') {
+        // Return the letter or space that needs to be outputted
         return copytree->data;
+        }
+        else {
+            return STANDARD_ERROR;
+        }
     }
+    
+    // Resets the tree
     else if (in == MORSE_CHAR_DECODE_RESET) {
-        copytree = head;
+        copytree = tree;
+        return SUCCESS;
+    }
+    else {
+        copytree = tree;
+        return STANDARD_ERROR;
     }
 }
 
@@ -120,14 +143,28 @@ char MorseDecode(MorseChar in)
  */
 MorseEvent MorseCheckEvents(void)
 {
+    // Makes the counter 
     static uint16_t counter = 0;
+    
+    // Set the state to Waiting
     static states state = WAITING;
-    static uint8_t buttonEvents;
+    
+    // Make a buttonEvents
+    static ButtonEventFlags buttonEvents;
+    
+    // Set it to ButtonsCheckEvents
     buttonEvents = ButtonsCheckEvents();
+    
+    // Iterate counter
     counter++;
+    
+    // Switch case statement
     switch (state) {
+        
     case WAITING:
-        if (buttonEvents & BUTTON_EVENT_4DOWN) {
+        
+        // If button 4 is pressed move onto dot state
+        if (buttonEvents == BUTTON_EVENT_4DOWN) {
             counter = 0;
             state = DOT;
             break;
@@ -135,10 +172,14 @@ MorseEvent MorseCheckEvents(void)
         break;
 
     case DOT:
+        
+        // If the button is held down move to dash
         if (counter >= MORSE_EVENT_LENGTH_DOWN_DOT) {
             state = DASH;
         }
-        if (buttonEvents & BUTTON_EVENT_4UP) {
+        
+        // If the button is released move to inter letter and reset the counter and return dot event
+        if (buttonEvents == BUTTON_EVENT_4UP) {
             counter = 0;
             state = INTER_LETTER;
             return MORSE_EVENT_DOT;
@@ -146,7 +187,9 @@ MorseEvent MorseCheckEvents(void)
         break;
 
     case DASH:
-        if (buttonEvents & BUTTON_EVENT_4UP) {
+        
+        //  Once the button is released dash event has happened
+        if (buttonEvents == BUTTON_EVENT_4UP) {
             counter = 0;
             state = INTER_LETTER;
             return MORSE_EVENT_DASH;
@@ -154,12 +197,16 @@ MorseEvent MorseCheckEvents(void)
         break;
 
     case INTER_LETTER:
+        
+        // If button is not interacted for a certain amount of time go back to waiting
         if (counter >= MORSE_EVENT_LENGTH_UP_INTER_LETTER_TIMEOUT) {
             state = WAITING;
             return MORSE_EVENT_INTER_WORD;
             break;
         }
-        if (buttonEvents & BUTTON_EVENT_4DOWN) {
+        
+        // If the button is pressed down in a short amount of time move back to the dot state
+        if (buttonEvents == BUTTON_EVENT_4DOWN) {
             if (counter >= MORSE_EVENT_LENGTH_UP_INTER_LETTER) {
                 counter = 0;
                 state = DOT;
@@ -170,7 +217,8 @@ MorseEvent MorseCheckEvents(void)
             }
         }
         break;
-
-        return MORSE_EVENT_NONE;
     }
+    
+    // If nothing occurs return the none event
+    return MORSE_EVENT_NONE;
 }
