@@ -136,7 +136,7 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
 {
     switch(type) {
     case FIELD_BOAT_SMALL:
-        switch(type) {
+        switch(dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
             break;
         case FIELD_BOAT_DIRECTION_EAST:
@@ -148,7 +148,7 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
         }
         break;
     case FIELD_BOAT_MEDIUM:
-        switch(type) {
+        switch(dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
             break;
         case FIELD_BOAT_DIRECTION_EAST:
@@ -160,7 +160,7 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
         }
         break;
     case FIELD_BOAT_LARGE:
-        switch(type) {
+        switch(dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
             break;
         case FIELD_BOAT_DIRECTION_EAST:
@@ -172,7 +172,7 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
         }
         break;
     case FIELD_BOAT_HUGE:
-        switch(type) {
+        switch(dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
             break;
         case FIELD_BOAT_DIRECTION_EAST:
