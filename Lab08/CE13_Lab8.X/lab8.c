@@ -193,6 +193,7 @@ static void topline(char morse)
 
 static void bottomline(char letter)
 {
+    
     // Make static to skip spaces and just iterate
     static int i = 21;
     string1[i] = letter;
