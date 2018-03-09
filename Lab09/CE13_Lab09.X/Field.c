@@ -4,14 +4,17 @@
  *
  * Created on March 8, 2018, 5:26 PM
  */
+#include "BOARD.h"
 #include "Field.h"
 #include "FieldOled.h"
 #include "Oled.h"
 #include "OledDriver.h"
 #include "Protocol.h"
 #include "xc.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-static int i, j;
 
 /**
  * FieldInit() will fill the passed field array with the data specified in positionData. Also the
@@ -22,6 +25,7 @@ static int i, j;
  */
 void FieldInit(Field *f, FieldPosition p)
 {
+    static int i, j;
     for (i = 0; i < FIELD_ROWS; i++) {
         for (j = 0; j < FIELD_COLS; j++) {
             f->field[i][j] = p;

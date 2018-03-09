@@ -66,5 +66,3 @@ uint8_t AgentGetStatus(void){
 uint8_t AgentGetEnemyStatus(void){
     
 }
-
-#endif // AGENT_H
