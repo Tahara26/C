@@ -138,6 +138,7 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
     case FIELD_BOAT_SMALL:
         switch(dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
+            
             break;
         case FIELD_BOAT_DIRECTION_EAST:
             break;
