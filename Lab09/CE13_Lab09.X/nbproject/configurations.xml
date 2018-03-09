@@ -27,6 +27,7 @@
       <itemPath>BattleBoats.c</itemPath>
       <itemPath>BOARD.c</itemPath>
       <itemPath>Tester.c</itemPath>
+      <itemPath>Field.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
