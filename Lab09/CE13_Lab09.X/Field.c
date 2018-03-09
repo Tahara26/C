@@ -78,7 +78,24 @@ FieldPosition FieldAt(const Field *f, uint8_t row, uint8_t col)
  */
 FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition p)
 {
+    FieldPosition temp = f->field[row][col];
     f->field[row][col] = p;
+    
+    if(temp == FIELD_POSITION_EMPTY){
+        return FIELD_POSITION_EMPTY;
+    }
+    else if (temp == FIELD_POSITION_SMALL_BOAT){
+        return FIELD_POSITION_SMALL_BOAT;
+    }
+    else if (temp == FIELD_POSITION_MEDIUM_BOAT){
+        return FIELD_POSITION_MEDIUM_BOAT;
+    }
+    else if (temp == FIELD_POSITION_LARGE_BOAT) {
+        return FIELD_POSITION_LARGE_BOAT;
+    }
+    else {
+        return FIELD_POSITION_HUGE_BOAT;
+    }
 }
 
 /**
@@ -117,7 +134,56 @@ FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition
  */
 uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, BoatType type)
 {
-
+    switch(type) {
+    case FIELD_BOAT_SMALL:
+        switch(type) {
+        case FIELD_BOAT_DIRECTION_NORTH:
+            break;
+        case FIELD_BOAT_DIRECTION_EAST:
+            break;
+        case FIELD_BOAT_DIRECTION_SOUTH:
+            break;
+        case FIELD_BOAT_DIRECTION_WEST:
+            break;
+        }
+        break;
+    case FIELD_BOAT_MEDIUM:
+        switch(type) {
+        case FIELD_BOAT_DIRECTION_NORTH:
+            break;
+        case FIELD_BOAT_DIRECTION_EAST:
+            break;
+        case FIELD_BOAT_DIRECTION_SOUTH:
+            break;
+        case FIELD_BOAT_DIRECTION_WEST:
+            break;
+        }
+        break;
+    case FIELD_BOAT_LARGE:
+        switch(type) {
+        case FIELD_BOAT_DIRECTION_NORTH:
+            break;
+        case FIELD_BOAT_DIRECTION_EAST:
+            break;
+        case FIELD_BOAT_DIRECTION_SOUTH:
+            break;
+        case FIELD_BOAT_DIRECTION_WEST:
+            break;
+        }
+        break;
+    case FIELD_BOAT_HUGE:
+        switch(type) {
+        case FIELD_BOAT_DIRECTION_NORTH:
+            break;
+        case FIELD_BOAT_DIRECTION_EAST:
+            break;
+        case FIELD_BOAT_DIRECTION_SOUTH:
+            break;
+        case FIELD_BOAT_DIRECTION_WEST:
+            break;
+        }
+        break;
+    }
 }
 
 /**
