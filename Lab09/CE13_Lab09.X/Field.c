@@ -15,7 +15,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 /**
  * FieldInit() will fill the passed field array with the data specified in positionData. Also the
  * lives for each boat are filled according to the `BoatLives` enum.
@@ -46,27 +45,38 @@ void FieldInit(Field *f, FieldPosition p)
  */
 FieldPosition FieldAt(const Field *f, uint8_t row, uint8_t col)
 {
-    if(f->field[row][col] == FIELD_POSITION_EMPTY){
-        return FIELD_POSITION_EMPTY;
-    }
-    else if (f->field[row][col] == FIELD_POSITION_SMALL_BOAT){
-        return FIELD_POSITION_SMALL_BOAT;
-    }
-    else if (f->field[row][col] == FIELD_POSITION_MEDIUM_BOAT){
-        return FIELD_POSITION_MEDIUM_BOAT;
-    }
-    else if (f->field[row][col] == FIELD_POSITION_LARGE_BOAT) {
-        return FIELD_POSITION_LARGE_BOAT;
-    }
-    else if (f->field[row][col] == FIELD_POSITION_HUGE_BOAT) {
-        return FIELD_POSITION_HUGE_BOAT;
-    }
-    else if (f->field[row][col] == FIELD_POSITION_UNKNOWN){
-        return FIELD_POSITION_UNKNOWN;
-    }
-    else {
-        return STANDARD_ERROR;
-    }
+    return f->field[row][col];
+    //    
+    //    if(f->field[row][col] == FIELD_POSITION_EMPTY){
+    //        return FIELD_POSITION_EMPTY;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_MISS){
+    //        return FIELD_POSITION_MISS;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_SMALL_BOAT){
+    //        return FIELD_POSITION_SMALL_BOAT;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_MEDIUM_BOAT){
+    //        return FIELD_POSITION_MEDIUM_BOAT;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_LARGE_BOAT) {
+    //        return FIELD_POSITION_LARGE_BOAT;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_HUGE_BOAT) {
+    //        return FIELD_POSITION_HUGE_BOAT;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_UNKNOWN){
+    //        return FIELD_POSITION_UNKNOWN;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_HIT){
+    //        return FIELD_POSITION_HIT;
+    //    }
+    //    else if (f->field[row][col] == FIELD_POSITION_CURSOR){
+    //        return FIELD_POSITION_CURSOR;
+    //    }
+    //    else {
+    //        return STANDARD_ERROR;
+    //    }
 }
 
 /**
@@ -82,24 +92,25 @@ FieldPosition FieldAt(const Field *f, uint8_t row, uint8_t col)
  */
 FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition p)
 {
-    FieldPosition temp = f->field[row][col];
+    FieldPosition temporary1 = f->field[row][col];
     f->field[row][col] = p;
-    
-    if(temp == FIELD_POSITION_EMPTY){
-        return FIELD_POSITION_EMPTY;
-    }
-    else if (temp == FIELD_POSITION_SMALL_BOAT){
-        return FIELD_POSITION_SMALL_BOAT;
-    }
-    else if (temp == FIELD_POSITION_MEDIUM_BOAT){
-        return FIELD_POSITION_MEDIUM_BOAT;
-    }
-    else if (temp == FIELD_POSITION_LARGE_BOAT) {
-        return FIELD_POSITION_LARGE_BOAT;
-    }
-    else {
-        return FIELD_POSITION_HUGE_BOAT;
-    }
+    return temporary1;
+
+    //    if(temp == FIELD_POSITION_EMPTY){
+    //        return FIELD_POSITION_EMPTY;
+    //    }
+    //    else if (temp == FIELD_POSITION_SMALL_BOAT){
+    //        return FIELD_POSITION_SMALL_BOAT;
+    //    }
+    //    else if (temp == FIELD_POSITION_MEDIUM_BOAT){
+    //        return FIELD_POSITION_MEDIUM_BOAT;
+    //    }
+    //    else if (temp == FIELD_POSITION_LARGE_BOAT) {
+    //        return FIELD_POSITION_LARGE_BOAT;
+    //    }
+    //    else {
+    //        return FIELD_POSITION_HUGE_BOAT;
+    //    }
 }
 
 /**
@@ -138,57 +149,269 @@ FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition
  */
 uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, BoatType type)
 {
-    switch(type) {
+    uint8_t diff;
+    uint8_t currow;
+    uint8_t curcol;
+
+    switch (type) {
     case FIELD_BOAT_SMALL:
-        switch(dir) {
+        switch (dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
-            
+            diff = row - FIELD_BOAT_LIVES_SMALL;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (currow = row; currow > diff; currow--) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow > diff; currow--) {
+                f->field[currow][col] = FIELD_POSITION_SMALL_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_EAST:
+            diff = col + FIELD_BOAT_LIVES_SMALL;
+            if (diff > FIELD_COLS) {
+                return FALSE;
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                f->field[row][curcol] = FIELD_POSITION_SMALL_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_SOUTH:
+            diff = row + FIELD_BOAT_LIVES_SMALL;
+            if (diff > FIELD_ROWS) {
+                return FALSE;
+            }
+            for (currow = row; currow < diff; currow++) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow < diff; currow++) {
+                f->field[currow][col] = FIELD_POSITION_SMALL_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_WEST:
+            diff = col - FIELD_BOAT_LIVES_SMALL;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                f->field[row][curcol] = FIELD_POSITION_SMALL_BOAT;
+            }
+            return TRUE;
             break;
         }
         break;
     case FIELD_BOAT_MEDIUM:
-        switch(dir) {
+        switch (dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
+            diff = row - FIELD_BOAT_LIVES_MEDIUM;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (currow = row; currow > diff; currow--) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow > diff; currow--) {
+                f->field[currow][col] = FIELD_POSITION_MEDIUM_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_EAST:
+            diff = col + FIELD_BOAT_LIVES_MEDIUM;
+            if (diff > FIELD_COLS) {
+                return FALSE;
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                f->field[row][curcol] = FIELD_POSITION_MEDIUM_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_SOUTH:
+            diff = row + FIELD_BOAT_LIVES_MEDIUM;
+            if (diff > FIELD_ROWS) {
+                return FALSE;
+            }
+            for (currow = row; currow < diff; currow++) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow < diff; currow++) {
+                f->field[currow][col] = FIELD_POSITION_MEDIUM_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_WEST:
+            diff = col - FIELD_BOAT_LIVES_MEDIUM;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                f->field[row][curcol] = FIELD_POSITION_MEDIUM_BOAT;
+            }
+            return TRUE;
             break;
         }
         break;
     case FIELD_BOAT_LARGE:
-        switch(dir) {
+        switch (dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
+            diff = row - FIELD_BOAT_LIVES_LARGE;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (currow = row; currow > diff; currow--) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow > diff; currow--) {
+                f->field[currow][col] = FIELD_POSITION_LARGE_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_EAST:
+            diff = col + FIELD_BOAT_LIVES_LARGE;
+            if (diff > FIELD_COLS) {
+                return FALSE;
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                f->field[row][curcol] = FIELD_POSITION_LARGE_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_SOUTH:
+            diff = row + FIELD_BOAT_LIVES_LARGE;
+            if (diff > FIELD_ROWS) {
+                return FALSE;
+            }
+            for (currow = row; currow < diff; currow++) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow < diff; currow++) {
+                f->field[currow][col] = FIELD_POSITION_LARGE_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_WEST:
+            diff = col - FIELD_BOAT_LIVES_LARGE;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                f->field[row][curcol] = FIELD_POSITION_LARGE_BOAT;
+            }
+            return TRUE;
             break;
         }
         break;
     case FIELD_BOAT_HUGE:
-        switch(dir) {
+        switch (dir) {
         case FIELD_BOAT_DIRECTION_NORTH:
+            diff = row - FIELD_BOAT_LIVES_HUGE;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (currow = row; currow > diff; currow--) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow > diff; currow--) {
+                f->field[currow][col] = FIELD_POSITION_HUGE_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_EAST:
+            diff = col + FIELD_BOAT_LIVES_HUGE;
+            if (diff > FIELD_COLS) {
+                return FALSE;
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol < diff; curcol++) {
+                f->field[row][curcol] = FIELD_POSITION_HUGE_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_SOUTH:
+            diff = row + FIELD_BOAT_LIVES_HUGE;
+            if (diff > FIELD_ROWS) {
+                return FALSE;
+            }
+            for (currow = row; currow < diff; currow++) {
+                if (f->field[currow][col]) {
+                    return FALSE;
+                }
+            }
+            for (currow = row; currow < diff; currow++) {
+                f->field[currow][col] = FIELD_POSITION_HUGE_BOAT;
+            }
+            return TRUE;
             break;
         case FIELD_BOAT_DIRECTION_WEST:
+            diff = col - FIELD_BOAT_LIVES_HUGE;
+            if (diff < -1) {
+                return FALSE;
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                if (f->field[row][curcol]) {
+                    return FALSE;
+                }
+            }
+            for (curcol = row; curcol > diff; curcol--) {
+                f->field[row][curcol] = FIELD_POSITION_HUGE_BOAT;
+            }
+            return TRUE;
             break;
         }
         break;
     }
+    return FALSE;
 }
 
 /**
@@ -204,7 +427,56 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
  */
 FieldPosition FieldRegisterEnemyAttack(Field *f, GuessData *gData)
 {
-
+    FieldPosition temporary2 = f->field[gData->row][gData->col];
+    
+    if (f->field[gData->row][gData->col] != FIELD_POSITION_EMPTY) {
+        if (f->field[gData->row][gData->col] == FIELD_POSITION_SMALL_BOAT && f->smallBoatLives != 1) {
+            gData->hit = HIT_HIT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->smallBoatLives -= 1;
+            return FIELD_POSITION_SMALL_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_MEDIUM_BOAT && f->mediumBoatLives != 1) {
+            gData->hit = HIT_HIT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->mediumBoatLives -= 1;
+            return FIELD_POSITION_MEDIUM_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_LARGE_BOAT && f->largeBoatLives != 1) {
+            gData->hit = HIT_HIT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->largeBoatLives -= 1;
+            return FIELD_POSITION_LARGE_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_HUGE_BOAT && f->hugeBoatLives != 1) {
+            gData->hit = HIT_HIT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->hugeBoatLives -= 1;
+            return FIELD_POSITION_HUGE_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_SMALL_BOAT && f->smallBoatLives == 1) {
+            gData->hit = HIT_SUNK_SMALL_BOAT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->smallBoatLives -= 1;
+            return FIELD_POSITION_SMALL_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_MEDIUM_BOAT && f->mediumBoatLives == 1) {
+            gData->hit = HIT_SUNK_MEDIUM_BOAT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->mediumBoatLives -= 1;
+            return FIELD_POSITION_MEDIUM_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_LARGE_BOAT && f->largeBoatLives == 1) {
+            gData->hit = HIT_SUNK_LARGE_BOAT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->largeBoatLives -= 1;
+            return FIELD_POSITION_LARGE_BOAT;
+        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_HUGE_BOAT && f->hugeBoatLives == 1) {
+            gData->hit = HIT_SUNK_HUGE_BOAT;
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->hugeBoatLives -= 1;
+            return FIELD_POSITION_HUGE_BOAT;
+        }
+    } else {
+        gData->hit = HIT_MISS;
+        f->field[gData->row][gData->col] = FIELD_POSITION_MISS;
+        return FIELD_POSITION_EMPTY;
+    }
+    return temporary2;
 }
 
 /**
@@ -222,7 +494,33 @@ FieldPosition FieldRegisterEnemyAttack(Field *f, GuessData *gData)
  */
 FieldPosition FieldUpdateKnowledge(Field *f, const GuessData *gData)
 {
-
+    FieldPosition temporary3 = f->field[gData->row][gData->col];
+    
+    if (gData->hit != HIT_MISS) {
+        if (gData->hit == HIT_HIT){
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+        }
+        else if (gData->hit == HIT_SUNK_SMALL_BOAT){
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->smallBoatLives = 0;
+        }
+        else if (gData->hit == HIT_SUNK_MEDIUM_BOAT){
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->mediumBoatLives = 0;
+        }
+        else if (gData->hit == HIT_SUNK_LARGE_BOAT){
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->largeBoatLives = 0;
+        }
+        else if (gData->hit == HIT_SUNK_HUGE_BOAT){
+            f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
+            f->hugeBoatLives = 0;
+        }
+    }
+    else if (gData->hit == HIT_MISS) {
+        f->field[gData->row][gData->col] = FIELD_POSITION_MISS;
+    }
+    return temporary3;
 }
 
 /**
@@ -235,5 +533,21 @@ FieldPosition FieldUpdateKnowledge(Field *f, const GuessData *gData)
  */
 uint8_t FieldGetBoatStates(const Field *f)
 {
-
+    uint8_t boatstates;
+    
+    boatstates = 0b00001111;
+    
+    if (f->smallBoatLives == 0) {
+        boatstates ^= FIELD_BOAT_STATUS_SMALL;
+    }
+    else if (f->mediumBoatLives == 0) {
+        boatstates ^= FIELD_BOAT_STATUS_MEDIUM;
+    }
+    else if (f->largeBoatLives == 0) {
+        boatstates ^= FIELD_BOAT_STATUS_LARGE;
+    }
+    else if (f->hugeBoatLives == 0) {
+        boatstates ^= FIELD_BOAT_STATUS_HUGE;
+    }
+    return boatstates;
 }
