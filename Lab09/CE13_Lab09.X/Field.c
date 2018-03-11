@@ -24,12 +24,15 @@
  */
 void FieldInit(Field *f, FieldPosition p)
 {
+    // Make a for loop to iterate through all of the points on the field
     static int i, j;
     for (i = 0; i < FIELD_ROWS; i++) {
         for (j = 0; j < FIELD_COLS; j++) {
             f->field[i][j] = p;
         }
     }
+    
+    // Set the lives of the ships to the set values
     f->smallBoatLives = FIELD_BOAT_LIVES_SMALL;
     f->mediumBoatLives = FIELD_BOAT_LIVES_MEDIUM;
     f->largeBoatLives = FIELD_BOAT_LIVES_LARGE;
@@ -45,6 +48,7 @@ void FieldInit(Field *f, FieldPosition p)
  */
 FieldPosition FieldAt(const Field *f, uint8_t row, uint8_t col)
 {
+    // Returns the position
     return f->field[row][col];
     //    
     //    if(f->field[row][col] == FIELD_POSITION_EMPTY){
@@ -92,7 +96,10 @@ FieldPosition FieldAt(const Field *f, uint8_t row, uint8_t col)
  */
 FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition p)
 {
+    // Make a temp to hold location
     FieldPosition temporary1 = f->field[row][col];
+    
+    // Set position to p
     f->field[row][col] = p;
     return temporary1;
 
@@ -149,13 +156,19 @@ FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition
  */
 uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, BoatType type)
 {
+    // Set variables to hold values
     uint8_t diff;
     uint8_t currow;
     uint8_t curcol;
 
+    // Switch statement for 
     switch (type) {
+        
+    // Case for the small boat
     case FIELD_BOAT_SMALL:
         switch (dir) {
+            
+        // North case
         case FIELD_BOAT_DIRECTION_NORTH:
             diff = row - FIELD_BOAT_LIVES_SMALL;
             if (diff < -1) {
@@ -171,6 +184,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // East case
         case FIELD_BOAT_DIRECTION_EAST:
             diff = col + FIELD_BOAT_LIVES_SMALL;
             if (diff > FIELD_COLS) {
@@ -186,6 +201,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // South case    
         case FIELD_BOAT_DIRECTION_SOUTH:
             diff = row + FIELD_BOAT_LIVES_SMALL;
             if (diff > FIELD_ROWS) {
@@ -201,6 +218,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // West case    
         case FIELD_BOAT_DIRECTION_WEST:
             diff = col - FIELD_BOAT_LIVES_SMALL;
             if (diff < -1) {
@@ -218,8 +237,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             break;
         }
         break;
+        
+    // Case for the medium boat
     case FIELD_BOAT_MEDIUM:
         switch (dir) {
+            
+        // North case
         case FIELD_BOAT_DIRECTION_NORTH:
             diff = row - FIELD_BOAT_LIVES_MEDIUM;
             if (diff < -1) {
@@ -235,6 +258,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // East case    
         case FIELD_BOAT_DIRECTION_EAST:
             diff = col + FIELD_BOAT_LIVES_MEDIUM;
             if (diff > FIELD_COLS) {
@@ -250,6 +275,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // South case    
         case FIELD_BOAT_DIRECTION_SOUTH:
             diff = row + FIELD_BOAT_LIVES_MEDIUM;
             if (diff > FIELD_ROWS) {
@@ -265,6 +292,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // West case    
         case FIELD_BOAT_DIRECTION_WEST:
             diff = col - FIELD_BOAT_LIVES_MEDIUM;
             if (diff < -1) {
@@ -282,8 +311,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             break;
         }
         break;
+        
+    // Case for the large boat
     case FIELD_BOAT_LARGE:
         switch (dir) {
+            
+        // North case
         case FIELD_BOAT_DIRECTION_NORTH:
             diff = row - FIELD_BOAT_LIVES_LARGE;
             if (diff < -1) {
@@ -299,6 +332,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // East case    
         case FIELD_BOAT_DIRECTION_EAST:
             diff = col + FIELD_BOAT_LIVES_LARGE;
             if (diff > FIELD_COLS) {
@@ -314,6 +349,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // South case    
         case FIELD_BOAT_DIRECTION_SOUTH:
             diff = row + FIELD_BOAT_LIVES_LARGE;
             if (diff > FIELD_ROWS) {
@@ -329,6 +366,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // West case    
         case FIELD_BOAT_DIRECTION_WEST:
             diff = col - FIELD_BOAT_LIVES_LARGE;
             if (diff < -1) {
@@ -346,8 +385,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             break;
         }
         break;
+        
+    // Case for the huge boat
     case FIELD_BOAT_HUGE:
         switch (dir) {
+            
+        // North case
         case FIELD_BOAT_DIRECTION_NORTH:
             diff = row - FIELD_BOAT_LIVES_HUGE;
             if (diff < -1) {
@@ -363,6 +406,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // East case    
         case FIELD_BOAT_DIRECTION_EAST:
             diff = col + FIELD_BOAT_LIVES_HUGE;
             if (diff > FIELD_COLS) {
@@ -378,6 +423,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // South case    
         case FIELD_BOAT_DIRECTION_SOUTH:
             diff = row + FIELD_BOAT_LIVES_HUGE;
             if (diff > FIELD_ROWS) {
@@ -393,6 +440,8 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             }
             return TRUE;
             break;
+            
+        // West case    
         case FIELD_BOAT_DIRECTION_WEST:
             diff = col - FIELD_BOAT_LIVES_HUGE;
             if (diff < -1) {
@@ -427,51 +476,79 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
  */
 FieldPosition FieldRegisterEnemyAttack(Field *f, GuessData *gData)
 {
+    // Make a temp to hold data
     FieldPosition temporary2 = f->field[gData->row][gData->col];
     
+    // Makes sure the field is not empty
     if (f->field[gData->row][gData->col] != FIELD_POSITION_EMPTY) {
+        
+        // Small boat and still has more than one life
         if (f->field[gData->row][gData->col] == FIELD_POSITION_SMALL_BOAT && f->smallBoatLives != 1) {
             gData->hit = HIT_HIT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->smallBoatLives -= 1;
             return FIELD_POSITION_SMALL_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_MEDIUM_BOAT && f->mediumBoatLives != 1) {
+        } 
+        
+        // Medium boat and still has more than one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_MEDIUM_BOAT && f->mediumBoatLives != 1) {
             gData->hit = HIT_HIT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->mediumBoatLives -= 1;
             return FIELD_POSITION_MEDIUM_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_LARGE_BOAT && f->largeBoatLives != 1) {
+        } 
+        
+        // Large boat and still has more than one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_LARGE_BOAT && f->largeBoatLives != 1) {
             gData->hit = HIT_HIT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->largeBoatLives -= 1;
             return FIELD_POSITION_LARGE_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_HUGE_BOAT && f->hugeBoatLives != 1) {
+        } 
+        
+        // Huge boat and still has more than one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_HUGE_BOAT && f->hugeBoatLives != 1) {
             gData->hit = HIT_HIT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->hugeBoatLives -= 1;
             return FIELD_POSITION_HUGE_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_SMALL_BOAT && f->smallBoatLives == 1) {
+        } 
+        
+        // Small boat and only has one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_SMALL_BOAT && f->smallBoatLives == 1) {
             gData->hit = HIT_SUNK_SMALL_BOAT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->smallBoatLives -= 1;
             return FIELD_POSITION_SMALL_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_MEDIUM_BOAT && f->mediumBoatLives == 1) {
+        } 
+        
+        // Medium boat and only has one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_MEDIUM_BOAT && f->mediumBoatLives == 1) {
             gData->hit = HIT_SUNK_MEDIUM_BOAT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->mediumBoatLives -= 1;
             return FIELD_POSITION_MEDIUM_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_LARGE_BOAT && f->largeBoatLives == 1) {
+        } 
+        
+        // Large boat and only has one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_LARGE_BOAT && f->largeBoatLives == 1) {
             gData->hit = HIT_SUNK_LARGE_BOAT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->largeBoatLives -= 1;
             return FIELD_POSITION_LARGE_BOAT;
-        } else if (f->field[gData->row][gData->col] == FIELD_POSITION_HUGE_BOAT && f->hugeBoatLives == 1) {
+        } 
+        
+        // Huge boat and only has one life
+        else if (f->field[gData->row][gData->col] == FIELD_POSITION_HUGE_BOAT && f->hugeBoatLives == 1) {
             gData->hit = HIT_SUNK_HUGE_BOAT;
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->hugeBoatLives -= 1;
             return FIELD_POSITION_HUGE_BOAT;
         }
-    } else {
+    } 
+    
+    // For the miss case
+    else {
         gData->hit = HIT_MISS;
         f->field[gData->row][gData->col] = FIELD_POSITION_MISS;
         return FIELD_POSITION_EMPTY;
@@ -494,29 +571,43 @@ FieldPosition FieldRegisterEnemyAttack(Field *f, GuessData *gData)
  */
 FieldPosition FieldUpdateKnowledge(Field *f, const GuessData *gData)
 {
+    // Store the temp data
     FieldPosition temporary3 = f->field[gData->row][gData->col];
     
+    // Check for hit 
     if (gData->hit != HIT_MISS) {
+        
+        // If hit return hit
         if (gData->hit == HIT_HIT){
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
         }
+        
+        // If there is no more lives for small boat return a 0
         else if (gData->hit == HIT_SUNK_SMALL_BOAT){
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->smallBoatLives = 0;
         }
+        
+        // If there is no more lives for medium boat return a 0
         else if (gData->hit == HIT_SUNK_MEDIUM_BOAT){
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->mediumBoatLives = 0;
         }
+        
+        // If there is no more lives for large boat return a 0
         else if (gData->hit == HIT_SUNK_LARGE_BOAT){
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->largeBoatLives = 0;
         }
+        
+        // If there is no more lives for huge boat return a 0
         else if (gData->hit == HIT_SUNK_HUGE_BOAT){
             f->field[gData->row][gData->col] = FIELD_POSITION_HIT;
             f->hugeBoatLives = 0;
         }
     }
+    
+    // For the miss case 
     else if (gData->hit == HIT_MISS) {
         f->field[gData->row][gData->col] = FIELD_POSITION_MISS;
     }
@@ -533,19 +624,28 @@ FieldPosition FieldUpdateKnowledge(Field *f, const GuessData *gData)
  */
 uint8_t FieldGetBoatStates(const Field *f)
 {
+    // Create a integer
     uint8_t boatstates;
     
+    // Set the value of the integer
     boatstates = 0b00001111;
     
+    // XOR the value in order to update value 
     if (f->smallBoatLives == 0) {
         boatstates ^= FIELD_BOAT_STATUS_SMALL;
     }
+    
+    // XOR the value in order to update value 
     else if (f->mediumBoatLives == 0) {
         boatstates ^= FIELD_BOAT_STATUS_MEDIUM;
     }
+    
+    // XOR the value in order to update value 
     else if (f->largeBoatLives == 0) {
         boatstates ^= FIELD_BOAT_STATUS_LARGE;
     }
+    
+    // XOR the value in order to update value 
     else if (f->hugeBoatLives == 0) {
         boatstates ^= FIELD_BOAT_STATUS_HUGE;
     }

@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=BattleBoats.c BOARD.c Tester.c Field.c ArtificialAgent.c
+SOURCEFILES_QUOTED_IF_SPACED=BattleBoats.c BOARD.c Tester.c Field.c ArtificialAgent.c Protocol.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Tester.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/ArtificialAgent.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/BattleBoats.o.d ${OBJECTDIR}/BOARD.o.d ${OBJECTDIR}/Tester.o.d ${OBJECTDIR}/Field.o.d ${OBJECTDIR}/ArtificialAgent.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Tester.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/ArtificialAgent.o ${OBJECTDIR}/Protocol.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/BattleBoats.o.d ${OBJECTDIR}/BOARD.o.d ${OBJECTDIR}/Tester.o.d ${OBJECTDIR}/Field.o.d ${OBJECTDIR}/ArtificialAgent.o.d ${OBJECTDIR}/Protocol.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Tester.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/ArtificialAgent.o
+OBJECTFILES=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Tester.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/ArtificialAgent.o ${OBJECTDIR}/Protocol.o
 
 # Source Files
-SOURCEFILES=BattleBoats.c BOARD.c Tester.c Field.c ArtificialAgent.c
+SOURCEFILES=BattleBoats.c BOARD.c Tester.c Field.c ArtificialAgent.c Protocol.c
 
 
 CFLAGS=
@@ -136,6 +136,12 @@ ${OBJECTDIR}/ArtificialAgent.o: ArtificialAgent.c  nbproject/Makefile-${CND_CONF
 	@${RM} ${OBJECTDIR}/ArtificialAgent.o 
 	@${FIXDEPS} "${OBJECTDIR}/ArtificialAgent.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ArtificialAgent.o.d" -o ${OBJECTDIR}/ArtificialAgent.o ArtificialAgent.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/Protocol.o: Protocol.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/Protocol.o.d 
+	@${RM} ${OBJECTDIR}/Protocol.o 
+	@${FIXDEPS} "${OBJECTDIR}/Protocol.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Protocol.o.d" -o ${OBJECTDIR}/Protocol.o Protocol.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/BattleBoats.o: BattleBoats.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -166,6 +172,12 @@ ${OBJECTDIR}/ArtificialAgent.o: ArtificialAgent.c  nbproject/Makefile-${CND_CONF
 	@${RM} ${OBJECTDIR}/ArtificialAgent.o.d 
 	@${RM} ${OBJECTDIR}/ArtificialAgent.o 
 	@${FIXDEPS} "${OBJECTDIR}/ArtificialAgent.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ArtificialAgent.o.d" -o ${OBJECTDIR}/ArtificialAgent.o ArtificialAgent.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/Protocol.o: Protocol.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/Protocol.o.d 
+	@${RM} ${OBJECTDIR}/Protocol.o 
+	@${FIXDEPS} "${OBJECTDIR}/Protocol.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Protocol.o.d" -o ${OBJECTDIR}/Protocol.o Protocol.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
 endif
 

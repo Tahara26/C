@@ -14,6 +14,13 @@
 #include "Oled.h"
 #include "xc.h"
 
+static Field myfield;
+static Field enemyfield;
+NegotiationData mydata;
+NegotiationData enemydata;
+
+static AgentState agentstate = AGENT_STATE_GENERATE_NEG_DATA;
+
 /**
  * The Init() function for an Agent sets up everything necessary for an agent before the game
  * starts. This can include things like initialization of the field, placement of the boats,
@@ -21,6 +28,8 @@
  * use it safely within.
  */
 void AgentInit(void){
+    FieldInit(&myfield, FIELD_POSITION_EMPTY);
+    FieldInit(&enemyfield, FIELD_POSITION_UNKNOWN);
     
 }
 
@@ -37,7 +46,31 @@ void AgentInit(void){
  * @return The length of the string pointed to by outBuffer (excludes \0 character).
  */
 int AgentRun(char in, char *outBuffer){
-    
+    switch (agentstate) {
+    case AGENT_STATE_GENERATE_NEG_DATA:
+        ProtocolGenerateNegotiationData(&mydata);
+        agentstate = AGENT_STATE_SEND_CHALLENGE_DATA;
+         
+        break;
+    case AGENT_STATE_SEND_CHALLENGE_DATA:
+        
+        break;
+    case AGENT_STATE_DETERMINE_TURN_ORDER:
+        break;
+    case AGENT_STATE_SEND_GUESS:
+        break;
+    case AGENT_STATE_WAIT_FOR_HIT:
+        break;
+    case AGENT_STATE_WAIT_FOR_GUESS:
+        break;
+    case AGENT_STATE_INVALID:
+        break;
+    case AGENT_STATE_LOST:
+        break;
+    case AGENT_STATE_WON:
+        break;
+        
+    }
 }
 
 /**
