@@ -1,6 +1,6 @@
 /*
  * File:   ArtificialAgent.c
- * Author: JustinT
+ * Author: Justin Tahara and Rayne Jones
  *
  * Created on March 9, 2018, 11:13 AM
  */
@@ -14,12 +14,16 @@
 #include "Oled.h"
 #include "xc.h"
 
-static Field myfield;
-static Field enemyfield;
-NegotiationData mydata;
-NegotiationData enemydata;
+static Field myField;
+static Field enemyField;
+static NegotiationData myData;
+static NegotiationData enemyData;
+static GuessData myGuess;
+static GuessData enemyGuess;
+static ProtocolParserStatus parsingStatus;
+static uint8_t boatStatus;
 
-static AgentState agentstate = AGENT_STATE_GENERATE_NEG_DATA;
+static AgentState agentState = AGENT_STATE_GENERATE_NEG_DATA;
 
 /**
  * The Init() function for an Agent sets up everything necessary for an agent before the game
@@ -27,10 +31,11 @@ static AgentState agentstate = AGENT_STATE_GENERATE_NEG_DATA;
  * etc. The agent can assume that stdlib's rand() function has been seeded properly in order to
  * use it safely within.
  */
-void AgentInit(void){
-    FieldInit(&myfield, FIELD_POSITION_EMPTY);
-    FieldInit(&enemyfield, FIELD_POSITION_UNKNOWN);
-    
+void AgentInit(void)
+{
+    FieldInit(&myField, FIELD_POSITION_EMPTY);
+    FieldInit(&enemyField, FIELD_POSITION_UNKNOWN);
+
 }
 
 /**
@@ -45,31 +50,97 @@ void AgentInit(void){
  *                  data.
  * @return The length of the string pointed to by outBuffer (excludes \0 character).
  */
-int AgentRun(char in, char *outBuffer){
-    switch (agentstate) {
+int AgentRun(char in, char *outBuffer)
+{
+    switch (agentState) {
     case AGENT_STATE_GENERATE_NEG_DATA:
-        ProtocolGenerateNegotiationData(&mydata);
-        agentstate = AGENT_STATE_SEND_CHALLENGE_DATA;
-         
+        //generate negotiation data
+        ProtocolGenerateNegotiationData(&myData);
+        agentState = AGENT_STATE_SEND_CHALLENGE_DATA;
+        /*send challenge data*/
         break;
     case AGENT_STATE_SEND_CHALLENGE_DATA:
-        
+        parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
+        if (parsingStatus == PROTOCOL_PARSED_CHA_MESSAGE) {
+            //record enemy data
+            //send determine data
+            agentState = AGENT_STATE_DETERMINE_TURN_ORDER;
+        } else if (parsingStatus == PROTOCOL_PARSING_FAILURE) {
+            OledClear(OLED_COLOR_BLACK);
+            OledDrawString(ERROR_STRING_PARSING);
+            OledUpdate();
+            agentState = AGENT_STATE_INVALID;
+        }
         break;
     case AGENT_STATE_DETERMINE_TURN_ORDER:
+        parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
+        if (parsingStatus == PROTOCOL_PARSED_DET_MESSAGE) {
+            if (ProtocolValidateNegotiationData(&enemyData)) {
+                if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_TIE) {
+                    OledClear(OLED_COLOR_BLACK);
+                    OledDrawString(ERROR_STRING_ORDERING);
+                    OledUpdate();
+                    agentState = AGENT_STATE_INVALID;
+                } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_START) {
+                    //set turn to MINE
+                    //update screen
+                    agentState = AGENT_STATE_SEND_GUESS;
+                } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_DEFER) {
+                    //set turn to THEIRS
+                    //update screen
+                    agentState = AGENT_STATE_WAIT_FOR_GUESS;
+                }
+            } else {
+                OledClear(OLED_COLOR_BLACK);
+                OledDrawString(ERROR_STRING_NEG_DATA);
+                OledUpdate();
+                agentState = AGENT_STATE_INVALID;
+            }
+        } else if (parsingStatus == PROTOCOL_PARSING_FAILURE) {
+            OledClear(OLED_COLOR_BLACK);
+            OledDrawString(ERROR_STRING_PARSING);
+            OledUpdate();
+            agentState = AGENT_STATE_INVALID;
+        }
         break;
     case AGENT_STATE_SEND_GUESS:
+        //if generated valid coordinates
+        //send coo message
         break;
     case AGENT_STATE_WAIT_FOR_HIT:
         break;
     case AGENT_STATE_WAIT_FOR_GUESS:
+        parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
+        boatStatus = FieldGetBoatStates(&myField);
+        if (parsingStatus == PROTOCOL_PARSED_COO_MESSAGE && boatStatus == 0) {
+            //set turn to NONE
+            //update screen
+            //send hit message
+            ProtocolEncodeHitMessage(outBuffer, &myData);
+            agentState = AGENT_STATE_LOST;
+        } else if (parsingStatus == PROTOCOL_PARSED_COO_MESSAGE && boatStatus != 0) {
+            //set turn to MINE
+            //register hit
+            //update screen
+            //send hit message
+            agentState = AGENT_STATE_SEND_GUESS;
+        } else if (parsingStatus == PROTOCOL_PARSING_FAILURE) {
+            OledClear(OLED_COLOR_BLACK);
+            OledDrawString(ERROR_STRING_PARSING);
+            OledUpdate();
+            agentState = AGENT_STATE_INVALID;
+        }
         break;
     case AGENT_STATE_INVALID:
+        return 0;
         break;
     case AGENT_STATE_LOST:
+        return 0;
         break;
     case AGENT_STATE_WON:
+        return 0;
         break;
-        
+
     }
 }
 
@@ -84,8 +155,9 @@ int AgentRun(char in, char *outBuffer){
  * @see Field.h:FieldGetBoatStates()
  * @see Field.h:BoatStatus
  */
-uint8_t AgentGetStatus(void){
-    
+uint8_t AgentGetStatus(void)
+{
+
 }
 
 /**
@@ -96,6 +168,7 @@ uint8_t AgentGetStatus(void){
  * @see Field.h:FieldGetBoatStates()
  * @see Field.h:BoatStatus
  */
-uint8_t AgentGetEnemyStatus(void){
-    
+uint8_t AgentGetEnemyStatus(void)
+{
+
 }
