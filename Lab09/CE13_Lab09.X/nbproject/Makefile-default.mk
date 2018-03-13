@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=BattleBoats.c BOARD.c Tester.c Field.c ArtificialAgent.c Protocol.c
+SOURCEFILES_QUOTED_IF_SPACED=BattleBoats.c BOARD.c Field.c Protocol.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Tester.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/ArtificialAgent.o ${OBJECTDIR}/Protocol.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/BattleBoats.o.d ${OBJECTDIR}/BOARD.o.d ${OBJECTDIR}/Tester.o.d ${OBJECTDIR}/Field.o.d ${OBJECTDIR}/ArtificialAgent.o.d ${OBJECTDIR}/Protocol.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/Protocol.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/BattleBoats.o.d ${OBJECTDIR}/BOARD.o.d ${OBJECTDIR}/Field.o.d ${OBJECTDIR}/Protocol.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Tester.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/ArtificialAgent.o ${OBJECTDIR}/Protocol.o
+OBJECTFILES=${OBJECTDIR}/BattleBoats.o ${OBJECTDIR}/BOARD.o ${OBJECTDIR}/Field.o ${OBJECTDIR}/Protocol.o
 
 # Source Files
-SOURCEFILES=BattleBoats.c BOARD.c Tester.c Field.c ArtificialAgent.c Protocol.c
+SOURCEFILES=BattleBoats.c BOARD.c Field.c Protocol.c
 
 
 CFLAGS=
@@ -118,23 +118,11 @@ ${OBJECTDIR}/BOARD.o: BOARD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/BOARD.o 
 	@${FIXDEPS} "${OBJECTDIR}/BOARD.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/BOARD.o.d" -o ${OBJECTDIR}/BOARD.o BOARD.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/Tester.o: Tester.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Tester.o.d 
-	@${RM} ${OBJECTDIR}/Tester.o 
-	@${FIXDEPS} "${OBJECTDIR}/Tester.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Tester.o.d" -o ${OBJECTDIR}/Tester.o Tester.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/Field.o: Field.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/Field.o.d 
 	@${RM} ${OBJECTDIR}/Field.o 
 	@${FIXDEPS} "${OBJECTDIR}/Field.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Field.o.d" -o ${OBJECTDIR}/Field.o Field.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/ArtificialAgent.o: ArtificialAgent.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/ArtificialAgent.o.d 
-	@${RM} ${OBJECTDIR}/ArtificialAgent.o 
-	@${FIXDEPS} "${OBJECTDIR}/ArtificialAgent.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -DPICkit3PlatformTool=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ArtificialAgent.o.d" -o ${OBJECTDIR}/ArtificialAgent.o ArtificialAgent.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
 ${OBJECTDIR}/Protocol.o: Protocol.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -155,23 +143,11 @@ ${OBJECTDIR}/BOARD.o: BOARD.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/BOARD.o 
 	@${FIXDEPS} "${OBJECTDIR}/BOARD.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/BOARD.o.d" -o ${OBJECTDIR}/BOARD.o BOARD.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
-${OBJECTDIR}/Tester.o: Tester.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Tester.o.d 
-	@${RM} ${OBJECTDIR}/Tester.o 
-	@${FIXDEPS} "${OBJECTDIR}/Tester.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Tester.o.d" -o ${OBJECTDIR}/Tester.o Tester.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/Field.o: Field.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/Field.o.d 
 	@${RM} ${OBJECTDIR}/Field.o 
 	@${FIXDEPS} "${OBJECTDIR}/Field.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/Field.o.d" -o ${OBJECTDIR}/Field.o Field.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
-	
-${OBJECTDIR}/ArtificialAgent.o: ArtificialAgent.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/ArtificialAgent.o.d 
-	@${RM} ${OBJECTDIR}/ArtificialAgent.o 
-	@${FIXDEPS} "${OBJECTDIR}/ArtificialAgent.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/ArtificialAgent.o.d" -o ${OBJECTDIR}/ArtificialAgent.o ArtificialAgent.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD) 
 	
 ${OBJECTDIR}/Protocol.o: Protocol.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -190,14 +166,14 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: link
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Lab9SupportLib.a HumanAgent.o  
+dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  HumanAgent.o Lab9SupportLib.a  
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${MP_CC} $(MP_EXTRA_LD_PRE) -g -mdebugger -DPICkit3PlatformTool=1 -mprocessor=$(MP_PROCESSOR_OPTION)  -o dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}    Lab9SupportLib.a HumanAgent.o      -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)   -mreserve=data@0x0:0x1FC -mreserve=boot@0x1FC02000:0x1FC02FEF -mreserve=boot@0x1FC02000:0x1FC024FF  -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--defsym=PICkit3PlatformTool=1,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"
+	${MP_CC} $(MP_EXTRA_LD_PRE) -g -mdebugger -DPICkit3PlatformTool=1 -mprocessor=$(MP_PROCESSOR_OPTION)  -o dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}    HumanAgent.o Lab9SupportLib.a      -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)   -mreserve=data@0x0:0x1FC -mreserve=boot@0x1FC02000:0x1FC02FEF -mreserve=boot@0x1FC02000:0x1FC024FF  -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--defsym=PICkit3PlatformTool=1,--defsym=_min_heap_size=3072,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"
 	
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Lab9SupportLib.a HumanAgent.o 
+dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  HumanAgent.o Lab9SupportLib.a 
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${MP_CC} $(MP_EXTRA_LD_PRE)  -mprocessor=$(MP_PROCESSOR_OPTION)  -o dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}    Lab9SupportLib.a HumanAgent.o      -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"
+	${MP_CC} $(MP_EXTRA_LD_PRE)  -mprocessor=$(MP_PROCESSOR_OPTION)  -o dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}    HumanAgent.o Lab9SupportLib.a      -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=_min_heap_size=3072,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"
 	${MP_CC_DIR}/xc32-bin2hex dist/${CND_CONF}/${IMAGE_TYPE}/CE13_Lab09.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} 
 endif
 

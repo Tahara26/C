@@ -21,9 +21,12 @@ static NegotiationData enemyData;
 static GuessData myGuess;
 static GuessData enemyGuess;
 static ProtocolParserStatus parsingStatus;
+static AgentEvent agentStatus;
 static uint8_t boatStatus;
 
 static AgentState agentState = AGENT_STATE_GENERATE_NEG_DATA;
+
+static AgentEvent ProtocolToAgentEvent(ProtocolParserStatus input);
 
 /**
  * The Init() function for an Agent sets up everything necessary for an agent before the game
@@ -35,6 +38,22 @@ void AgentInit(void)
 {
     FieldInit(&myField, FIELD_POSITION_EMPTY);
     FieldInit(&enemyField, FIELD_POSITION_UNKNOWN);
+
+    do {
+        saveVal = FieldAddBoat(&myField, rand() % FIELD_ROWS, rand() % FIELD_COLS, rand() % 4, FIELD_BOAT_SMALL);
+    } while (saveVal != TRUE);
+
+    do {
+        saveVal = FieldAddBoat(&myField, rand() % FIELD_ROWS, rand() % FIELD_COLS, rand() % 4, FIELD_BOAT_MEDIUM);
+    } while (saveVal != TRUE);
+
+    do {
+        saveVal = FieldAddBoat(&myField, rand() % FIELD_ROWS, rand() % FIELD_COLS, rand() % 4, FIELD_BOAT_LARGE);
+    } while (saveVal != TRUE);
+
+    do {
+        saveVal = FieldAddBoat(&myField, rand() % FIELD_ROWS, rand() % FIELD_COLS, rand() % 4, FIELD_BOAT_HUGE);
+    } while (saveVal != TRUE);
 
 }
 
@@ -57,48 +76,60 @@ int AgentRun(char in, char *outBuffer)
         //generate negotiation data
         ProtocolGenerateNegotiationData(&myData);
         agentState = AGENT_STATE_SEND_CHALLENGE_DATA;
-        /*send challenge data*/
+        //send challenge data
+        return ProtocolEncodeChaMessage(outBuffer, &myData);
         break;
     case AGENT_STATE_SEND_CHALLENGE_DATA:
+        //decode enemy data
         parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
-        if (parsingStatus == PROTOCOL_PARSED_CHA_MESSAGE) {
-            //record enemy data
+        agentStatus = ProtocolToAgentEvent(parsingStatus);
+        if (agentStatus == AGENT_EVENT_RECEIVED_CHA_MESSAGE) {
             //send determine data
+            return ProtocolEncodeDetMessage(outBuffer, &myData);
+            //change agent state
             agentState = AGENT_STATE_DETERMINE_TURN_ORDER;
-        } else if (parsingStatus == PROTOCOL_PARSING_FAILURE) {
+        } else if (agentStatus == AGENT_EVENT_MESSAGE_PARSING_FAILED) {
+            //clear screen and draw error message
             OledClear(OLED_COLOR_BLACK);
-            OledDrawString(ERROR_STRING_PARSING);
+            OledDrawString(AGENT_ERROR_STRING_PARSING);
             OledUpdate();
             agentState = AGENT_STATE_INVALID;
         }
         break;
     case AGENT_STATE_DETERMINE_TURN_ORDER:
+        //decode enemy data
         parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
-        if (parsingStatus == PROTOCOL_PARSED_DET_MESSAGE) {
+        agentStatus = ProtocolToAgentEvent(parsingStatus);
+        if (agentStatus == AGENT_EVENT_RECEIVED_DET_MESSAGE) {
             if (ProtocolValidateNegotiationData(&enemyData)) {
                 if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_TIE) {
+                    //if the turn order is a tie, clear the screen and print error message
                     OledClear(OLED_COLOR_BLACK);
-                    OledDrawString(ERROR_STRING_ORDERING);
+                    OledDrawString(AGENT_ERROR_STRING_ORDERING);
                     OledUpdate();
                     agentState = AGENT_STATE_INVALID;
                 } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_START) {
                     //set turn to MINE
+                    
                     //update screen
                     agentState = AGENT_STATE_SEND_GUESS;
                 } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_DEFER) {
                     //set turn to THEIRS
+                    
                     //update screen
                     agentState = AGENT_STATE_WAIT_FOR_GUESS;
                 }
             } else {
+                //if the enemy data is invalid, print error message
                 OledClear(OLED_COLOR_BLACK);
-                OledDrawString(ERROR_STRING_NEG_DATA);
+                OledDrawString(AGENT_ERROR_STRING_NEG_DATA);
                 OledUpdate();
                 agentState = AGENT_STATE_INVALID;
             }
-        } else if (parsingStatus == PROTOCOL_PARSING_FAILURE) {
+        } else if (agentStatus == AGENT_EVENT_MESSAGE_PARSING_FAILED) {
+            //if the enemy data failed to parse, print error message
             OledClear(OLED_COLOR_BLACK);
-            OledDrawString(ERROR_STRING_PARSING);
+            OledDrawString(AGENT_ERROR_STRING_PARSING);
             OledUpdate();
             agentState = AGENT_STATE_INVALID;
         }
@@ -106,27 +137,57 @@ int AgentRun(char in, char *outBuffer)
     case AGENT_STATE_SEND_GUESS:
         //if generated valid coordinates
         //send coo message
+        return ProtocolEncodeCooMessage(outBuffer, &myGuess);
         break;
     case AGENT_STATE_WAIT_FOR_HIT:
+        parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
+        agentStatus = ProtocolToAgentEvent(parsingStatus);
+        boatStatus = AgentGetEnemyStatus();
+        if (agentStatus == AGENT_EVENT_RECEIVED_HIT_MESSAGE) {
+            //check enemy boat status
+            if (boatStatus != 0) {
+                //update knowledge of enemy field
+                FieldUpdateKnowledge(&enemyField, &myGuess);
+                //set turn to theirs
+                
+                //update screen
+                agentState = AGENT_STATE_WAIT_FOR_GUESS;
+            } else {
+                //set turn to NONE
+                
+                //update screen
+                agentState = AGENT_STATE_WON;
+            }
+        }
         break;
     case AGENT_STATE_WAIT_FOR_GUESS:
         parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
-        boatStatus = FieldGetBoatStates(&myField);
-        if (parsingStatus == PROTOCOL_PARSED_COO_MESSAGE && boatStatus == 0) {
-            //set turn to NONE
-            //update screen
-            //send hit message
-            ProtocolEncodeHitMessage(outBuffer, &myData);
-            agentState = AGENT_STATE_LOST;
-        } else if (parsingStatus == PROTOCOL_PARSED_COO_MESSAGE && boatStatus != 0) {
-            //set turn to MINE
-            //register hit
-            //update screen
-            //send hit message
-            agentState = AGENT_STATE_SEND_GUESS;
-        } else if (parsingStatus == PROTOCOL_PARSING_FAILURE) {
+        agentStatus = ProtocolToAgentEvent(parsingStatus);
+        boatStatus = AgentGetStatus();
+        if (agentStatus == AGENT_EVENT_RECEIVED_COO_MESSAGE) {
+            //register attack
+            FieldRegisterEnemyAttack(&myField, &enemyGuess);
+            //check boat status
+            if (boatStatus == 0) {
+                //set turn to NONE
+                
+                //update screen
+                
+                //send hit message
+                return ProtocolEncodeHitMessage(outBuffer, &enemyGuess);
+                agentState = AGENT_STATE_LOST;
+            } else {
+                //set turn to MINE
+                
+                //update screen
+                
+                //send hit message
+                return ProtocolEncodeHitMessage(outBuffer, &enemyGuess);
+                agentState = AGENT_STATE_SEND_GUESS;
+            }
+        } else if (agentStatus == AGENT_EVENT_MESSAGE_PARSING_FAILED) {
             OledClear(OLED_COLOR_BLACK);
-            OledDrawString(ERROR_STRING_PARSING);
+            OledDrawString(AGENT_ERROR_STRING_PARSING);
             OledUpdate();
             agentState = AGENT_STATE_INVALID;
         }
@@ -140,7 +201,8 @@ int AgentRun(char in, char *outBuffer)
     case AGENT_STATE_WON:
         return 0;
         break;
-
+    default:
+        return 0;
     }
 }
 
@@ -157,7 +219,7 @@ int AgentRun(char in, char *outBuffer)
  */
 uint8_t AgentGetStatus(void)
 {
-
+    return FieldGetBoatStates(&myField);
 }
 
 /**
@@ -170,5 +232,34 @@ uint8_t AgentGetStatus(void)
  */
 uint8_t AgentGetEnemyStatus(void)
 {
+    return FieldGetBoatStates(&enemyField);
+}
 
+static AgentEvent ProtocolToAgentEvent(ProtocolParserStatus input)
+{
+    switch (input) {
+    case PROTOCOL_PARSING_FAILURE:
+        return AGENT_EVENT_MESSAGE_PARSING_FAILED;
+        break;
+    case PROTOCOL_WAITING:
+        return AGENT_EVENT_NONE;
+        break;
+    case PROTOCOL_PARSING_GOOD:
+        return AGENT_EVENT_NONE;
+        break;
+    case PROTOCOL_PARSED_COO_MESSAGE:
+        return AGENT_EVENT_RECEIVED_COO_MESSAGE;
+        break;
+    case PROTOCOL_PARSED_HIT_MESSAGE:
+        return AGENT_EVENT_RECEIVED_HIT_MESSAGE;
+        break;
+    case PROTOCOL_PARSED_CHA_MESSAGE:
+        return AGENT_EVENT_RECEIVED_CHA_MESSAGE;
+        break;
+    case PROTOCOL_PARSED_DET_MESAGE:
+        return AGENT_EVENT_RECEIVED_DET_MESSAGE;
+        break;
+    default:
+        return AGENT_EVENT_NONE;
+    }
 }

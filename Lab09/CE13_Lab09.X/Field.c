@@ -50,37 +50,6 @@ FieldPosition FieldAt(const Field *f, uint8_t row, uint8_t col)
 {
     // Returns the position
     return f->field[row][col];
-    //    
-    //    if(f->field[row][col] == FIELD_POSITION_EMPTY){
-    //        return FIELD_POSITION_EMPTY;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_MISS){
-    //        return FIELD_POSITION_MISS;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_SMALL_BOAT){
-    //        return FIELD_POSITION_SMALL_BOAT;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_MEDIUM_BOAT){
-    //        return FIELD_POSITION_MEDIUM_BOAT;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_LARGE_BOAT) {
-    //        return FIELD_POSITION_LARGE_BOAT;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_HUGE_BOAT) {
-    //        return FIELD_POSITION_HUGE_BOAT;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_UNKNOWN){
-    //        return FIELD_POSITION_UNKNOWN;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_HIT){
-    //        return FIELD_POSITION_HIT;
-    //    }
-    //    else if (f->field[row][col] == FIELD_POSITION_CURSOR){
-    //        return FIELD_POSITION_CURSOR;
-    //    }
-    //    else {
-    //        return STANDARD_ERROR;
-    //    }
 }
 
 /**
@@ -102,22 +71,6 @@ FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition
     // Set position to p
     f->field[row][col] = p;
     return temporary1;
-
-    //    if(temp == FIELD_POSITION_EMPTY){
-    //        return FIELD_POSITION_EMPTY;
-    //    }
-    //    else if (temp == FIELD_POSITION_SMALL_BOAT){
-    //        return FIELD_POSITION_SMALL_BOAT;
-    //    }
-    //    else if (temp == FIELD_POSITION_MEDIUM_BOAT){
-    //        return FIELD_POSITION_MEDIUM_BOAT;
-    //    }
-    //    else if (temp == FIELD_POSITION_LARGE_BOAT) {
-    //        return FIELD_POSITION_LARGE_BOAT;
-    //    }
-    //    else {
-    //        return FIELD_POSITION_HUGE_BOAT;
-    //    }
 }
 
 /**
@@ -174,7 +127,7 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff < -1) {
                 return FALSE;
             }
-            for (currow = row; currow > diff; currow--) {
+            for (currow = row; currow < diff; currow--) {
                 if (f->field[currow][col]) {
                     return FALSE;
                 }
@@ -191,12 +144,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff > FIELD_COLS) {
                 return FALSE;
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 f->field[row][curcol] = FIELD_POSITION_SMALL_BOAT;
             }
             return TRUE;
@@ -225,12 +178,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff < -1) {
                 return FALSE;
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 f->field[row][curcol] = FIELD_POSITION_SMALL_BOAT;
             }
             return TRUE;
@@ -265,12 +218,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff > FIELD_COLS) {
                 return FALSE;
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 f->field[row][curcol] = FIELD_POSITION_MEDIUM_BOAT;
             }
             return TRUE;
@@ -299,12 +252,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff < -1) {
                 return FALSE;
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 f->field[row][curcol] = FIELD_POSITION_MEDIUM_BOAT;
             }
             return TRUE;
@@ -339,12 +292,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff > FIELD_COLS) {
                 return FALSE;
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 f->field[row][curcol] = FIELD_POSITION_LARGE_BOAT;
             }
             return TRUE;
@@ -373,12 +326,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff < -1) {
                 return FALSE;
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 f->field[row][curcol] = FIELD_POSITION_LARGE_BOAT;
             }
             return TRUE;
@@ -413,12 +366,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff > FIELD_COLS) {
                 return FALSE;
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol < diff; curcol++) {
+            for (curcol = col; curcol < diff; curcol++) {
                 f->field[row][curcol] = FIELD_POSITION_HUGE_BOAT;
             }
             return TRUE;
@@ -447,12 +400,12 @@ uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, Boat
             if (diff < -1) {
                 return FALSE;
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 if (f->field[row][curcol]) {
                     return FALSE;
                 }
             }
-            for (curcol = row; curcol > diff; curcol--) {
+            for (curcol = col; curcol > diff; curcol--) {
                 f->field[row][curcol] = FIELD_POSITION_HUGE_BOAT;
             }
             return TRUE;
@@ -628,26 +581,26 @@ uint8_t FieldGetBoatStates(const Field *f)
     uint8_t boatstates;
     
     // Set the value of the integer
-    boatstates = 0b00001111;
+    boatstates = (FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_LARGE | FIELD_BOAT_STATUS_MEDIUM | FIELD_BOAT_STATUS_SMALL);
     
-    // XOR the value in order to update value 
+    // AND and NOT the value in order to update value 
     if (f->smallBoatLives == 0) {
-        boatstates ^= FIELD_BOAT_STATUS_SMALL;
+        boatstates = boatstates&(!FIELD_BOAT_STATUS_SMALL);
     }
     
-    // XOR the value in order to update value 
+    // AND and NOT the value in order to update value 
     else if (f->mediumBoatLives == 0) {
-        boatstates ^= FIELD_BOAT_STATUS_MEDIUM;
+        boatstates = boatstates&(!FIELD_BOAT_STATUS_MEDIUM);
     }
     
-    // XOR the value in order to update value 
+    // AND and NOT the value in order to update value 
     else if (f->largeBoatLives == 0) {
-        boatstates ^= FIELD_BOAT_STATUS_LARGE;
+        boatstates = boatstates&(!FIELD_BOAT_STATUS_LARGE);
     }
     
-    // XOR the value in order to update value 
+    // AND and NOT the value in order to update value 
     else if (f->hugeBoatLives == 0) {
-        boatstates ^= FIELD_BOAT_STATUS_HUGE;
+        boatstates = boatstates&(!FIELD_BOAT_STATUS_HUGE);
     }
     return boatstates;
 }
