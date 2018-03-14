@@ -212,8 +212,10 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                 if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_DET, &data1, &data2) == 2) {
                     nData->guess = data1;
                     nData->encryptionKey = data2;
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSED_DET_MESSAGE;
                 } else {
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else if ((stateData.sentence[0] == id2[0]) && (stateData.sentence[1] == id2[1]) && (stateData.sentence[2] == id2[2])) {
@@ -222,8 +224,10 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                 if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_CHA, &data1, &data2) == 2) {
                     nData->encryptedGuess = data1;
                     nData->hash = data2;
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSED_CHA_MESSAGE;
                 } else {
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else if ((stateData.sentence[0] == id3[0]) && (stateData.sentence[1] == id3[1]) && (stateData.sentence[2] == id3[2])) {
@@ -232,8 +236,10 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                 if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_COO, &data1, &data2) == 2) {
                     gData->row = data1;
                     gData->col = data2;
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSED_COO_MESSAGE;
                 } else {
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else if ((stateData.sentence[0] == id4[0]) && (stateData.sentence[1] == id4[1]) && (stateData.sentence[2] == id4[2])) {
@@ -243,8 +249,10 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                     gData->row = data1;
                     gData->col = data2;
                     gData->hit = data3;
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSED_HIT_MESSAGE;
                 } else {
+                    stateData.state = WAITING;
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else {
@@ -259,6 +267,7 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
         }
         break;
     default:
+        stateData.state = WAITING;
         return PROTOCOL_PARSING_FAILURE;
     }
 }

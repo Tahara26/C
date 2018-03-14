@@ -98,6 +98,7 @@ int AgentRun(char in, char *outBuffer)
             OledDrawString(AGENT_ERROR_STRING_PARSING);
             OledUpdate();
             agentState = AGENT_STATE_INVALID;
+            outBuffer = NULL;
         }
         break;
     case AGENT_STATE_DETERMINE_TURN_ORDER:
@@ -115,18 +116,21 @@ int AgentRun(char in, char *outBuffer)
                     OledDrawString(AGENT_ERROR_STRING_ORDERING);
                     OledUpdate();
                     agentState = AGENT_STATE_INVALID;
+                    outBuffer = NULL;
                 } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_START) {
                     //set turn to MINE
                     playerTurn = FIELD_OLED_TURN_MINE;
                     //update screen
                     FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                     agentState = AGENT_STATE_SEND_GUESS;
+                    outBuffer = NULL;
                 } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_DEFER) {
                     //set turn to THEIRS
                     playerTurn = FIELD_OLED_TURN_THEIRS;
                     //update screen
                     FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                     agentState = AGENT_STATE_WAIT_FOR_GUESS;
+                    outBuffer = NULL;
                 }
             } else {
                 //if the enemy data is invalid, print error message
@@ -134,6 +138,7 @@ int AgentRun(char in, char *outBuffer)
                 OledDrawString(AGENT_ERROR_STRING_NEG_DATA);
                 OledUpdate();
                 agentState = AGENT_STATE_INVALID;
+                outBuffer = NULL;
             }
         } else if (agentStatus == AGENT_EVENT_MESSAGE_PARSING_FAILED) {
             //if the enemy data failed to parse, print error message
@@ -141,6 +146,7 @@ int AgentRun(char in, char *outBuffer)
             OledDrawString(AGENT_ERROR_STRING_PARSING);
             OledUpdate();
             agentState = AGENT_STATE_INVALID;
+            outBuffer = NULL;
         }
         break;
     case AGENT_STATE_SEND_GUESS:
@@ -170,6 +176,7 @@ int AgentRun(char in, char *outBuffer)
                 //update screen
                 FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                 agentState = AGENT_STATE_WAIT_FOR_GUESS;
+                outBuffer = NULL;
                 return 0;
             } else {
                 //set turn to NONE
@@ -177,6 +184,7 @@ int AgentRun(char in, char *outBuffer)
                 //update screen
                 FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                 agentState = AGENT_STATE_WON;
+                outBuffer = NULL;
                 return 0;
             }
         }
@@ -212,6 +220,7 @@ int AgentRun(char in, char *outBuffer)
             OledDrawString(AGENT_ERROR_STRING_PARSING);
             OledUpdate();
             agentState = AGENT_STATE_INVALID;
+            outBuffer = NULL;
         }
         break;
     case AGENT_STATE_INVALID:
