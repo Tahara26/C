@@ -141,6 +141,11 @@ int AgentRun(char in, char *outBuffer)
         break;
     case AGENT_STATE_SEND_GUESS:
         //if generated valid coordinates
+        myGuess.row = rand() % (FIELD_ROWS - 1);
+        myGuess.col = rand() % (FIELD_COLS - 1);
+        myGuess.hit = FieldAt(&enemyField, myGuess.row, myGuess.col);
+        
+        agentState = AGENT_STATE_WAIT_FOR_HIT;
         //send coo message
         return ProtocolEncodeCooMessage(outBuffer, &myGuess);
         break;
