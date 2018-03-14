@@ -45,7 +45,7 @@ static uint8_t AsciiConvert(char);
 int ProtocolEncodeCooMessage(char *message, const GuessData *data)
 {
     //create temporary values for storage into the message
-    char *temp = NULL;
+    char temp[PROTOCOL_MAX_PAYLOAD_LEN];
     uint8_t checksum;
 
     //generate the payload
@@ -65,7 +65,7 @@ int ProtocolEncodeCooMessage(char *message, const GuessData *data)
 int ProtocolEncodeHitMessage(char *message, const GuessData *data)
 {
     //create temporary values for storage into the message
-    char *temp = NULL;
+    char temp[PROTOCOL_MAX_PAYLOAD_LEN];
     uint8_t checksum;
 
     //generate the payload
@@ -85,7 +85,7 @@ int ProtocolEncodeHitMessage(char *message, const GuessData *data)
 int ProtocolEncodeChaMessage(char *message, const NegotiationData *data)
 {
     //create temporary values for storage into the message
-    char *temp = NULL;
+    char temp[PROTOCOL_MAX_PAYLOAD_LEN];
     uint8_t checksum;
 
     //generate the payload
@@ -105,7 +105,7 @@ int ProtocolEncodeChaMessage(char *message, const NegotiationData *data)
 int ProtocolEncodeDetMessage(char *message, const NegotiationData *data)
 {
     //create temporary values for storage into the message
-    char *temp = NULL;
+    char temp[PROTOCOL_MAX_PAYLOAD_LEN];
     uint8_t checksum;
 
     //generate the payload
