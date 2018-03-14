@@ -1,19 +1,17 @@
 /*
- * Protocol.c
+ * File: Protocol.c
  * Author: Rayne Jones
  */
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "Protocol.h"
 #include "BOARD.h"
 
 #define MSG_ID_LEN 3
 #define MIDDLE_CHAR 1
-#define DATA_1_LOC 4
-#define DATA_2_LOC 6
-#define DATA_3_LOC 8
 
 typedef enum {
     WAITING,
@@ -46,10 +44,17 @@ static uint8_t AsciiConvert(char);
  */
 int ProtocolEncodeCooMessage(char *message, const GuessData *data)
 {
+    //create temporary values for storage into the message
     char *temp = NULL;
     uint8_t checksum;
+
+    //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_COO, data->row, data->col);
+
+    //generate the checksum
     checksum = GetStringChecksum(temp);
+
+    //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
     return SUCCESS;
 }
@@ -59,10 +64,17 @@ int ProtocolEncodeCooMessage(char *message, const GuessData *data)
  */
 int ProtocolEncodeHitMessage(char *message, const GuessData *data)
 {
+    //create temporary values for storage into the message
     char *temp = NULL;
     uint8_t checksum;
+
+    //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_HIT, data->row, data->col, data->hit);
+
+    //generate the checksum
     checksum = GetStringChecksum(temp);
+
+    //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
     return SUCCESS;
 }
@@ -72,10 +84,17 @@ int ProtocolEncodeHitMessage(char *message, const GuessData *data)
  */
 int ProtocolEncodeChaMessage(char *message, const NegotiationData *data)
 {
+    //create temporary values for storage into the message
     char *temp = NULL;
     uint8_t checksum;
+
+    //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_CHA, data->encryptedGuess, data->hash);
+
+    //generate the checksum
     checksum = GetStringChecksum(temp);
+
+    //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
     return SUCCESS;
 }
@@ -85,10 +104,17 @@ int ProtocolEncodeChaMessage(char *message, const NegotiationData *data)
  */
 int ProtocolEncodeDetMessage(char *message, const NegotiationData *data)
 {
+    //create temporary values for storage into the message
     char *temp = NULL;
     uint8_t checksum;
+
+    //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_DET, data->guess, data->encryptionKey);
+
+    //generate the checksum
     checksum = GetStringChecksum(temp);
+
+    //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
     return SUCCESS;
 }
@@ -162,7 +188,7 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
             uint8_t temp = AsciiConvert(in);
             stateData.checksum |= temp;
             //if checksum matching passes
-            if (temp == GetStringChecksum(stateData.sentence)) {
+            if (stateData.checksum == GetStringChecksum(stateData.sentence)) {
                 stateData.sentence[stateData.index] = '\0';
                 stateData.state = NEWLINE;
                 return PROTOCOL_PARSING_GOOD;
@@ -179,38 +205,45 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
     case NEWLINE:
         //check for newline char
         if (in == '\n') {
-            int i, counter = 0;
-            for (i = 0; i < MSG_ID_LEN; i++) {
-                //check if MSG_ID is a valid ID
-                if ((stateData.sentence[i] == id1[i]) || (stateData.sentence[i] == id2[i])
-                        || (stateData.sentence[i] == id3[i]) || (stateData.sentence[i] == id4[i])) {
-                    counter++;
-                }
-            }
-            //if MSG_ID is valid, check which ID it is
-            if (counter == 3) {
-                stateData.state = WAITING;
-                if (stateData.sentence[MIDDLE_CHAR] == 'O') {
-                    //GuessData
-                    gData->row = stateData.sentence[DATA_1_LOC];
-                    gData->col = stateData.sentence[DATA_2_LOC];
-                    return PROTOCOL_PARSED_COO_MESSAGE;
-                } else if (stateData.sentence[MIDDLE_CHAR] == 'H') {
-                    //NegotiationData
-                    nData->encryptedGuess = stateData.sentence[DATA_1_LOC];
-                    nData->hash = stateData.sentence[DATA_2_LOC];
-                    return PROTOCOL_PARSED_CHA_MESSAGE;
-                } else if (stateData.sentence[MIDDLE_CHAR] == 'I') {
-                    //GuessData
-                    gData->row = stateData.sentence[DATA_1_LOC];
-                    gData->col = stateData.sentence[DATA_2_LOC];
-                    gData->hit = stateData.sentence[DATA_3_LOC];
-                    return PROTOCOL_PARSED_HIT_MESSAGE;
-                } else if (stateData.sentence[MIDDLE_CHAR] == 'E') {
-                    //NegotiationData
-                    nData->guess = stateData.sentence[DATA_1_LOC];
-                    nData->encryptionKey = stateData.sentence[DATA_2_LOC];
+            unsigned data1, data2, data3;
+            if ((stateData.sentence[0] == id1[0]) && (stateData.sentence[1] == id1[1]) && (stateData.sentence[2] == id1[2])) {
+                //DET
+                //NegotiationData
+                if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_DET, &data1, &data2) == 2) {
+                    nData->guess = data1;
+                    nData->encryptionKey = data2;
                     return PROTOCOL_PARSED_DET_MESSAGE;
+                } else {
+                    return PROTOCOL_PARSING_FAILURE;
+                }
+            } else if ((stateData.sentence[0] == id2[0]) && (stateData.sentence[1] == id2[1]) && (stateData.sentence[2] == id2[2])) {
+                //CHA
+                //NegotiationData
+                if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_CHA, &data1, &data2) == 2) {
+                    nData->encryptedGuess = data1;
+                    nData->hash = data2;
+                    return PROTOCOL_PARSED_CHA_MESSAGE;
+                } else {
+                    return PROTOCOL_PARSING_FAILURE;
+                }
+            } else if ((stateData.sentence[0] == id3[0]) && (stateData.sentence[1] == id3[1]) && (stateData.sentence[2] == id3[2])) {
+                //COO
+                //GuessData
+                if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_COO, &data1, &data2) == 2) {
+                    gData->row = data1;
+                    gData->col = data2;
+                    return PROTOCOL_PARSED_COO_MESSAGE;
+                } else {
+                    return PROTOCOL_PARSING_FAILURE;
+                }
+            } else if ((stateData.sentence[0] == id4[0]) && (stateData.sentence[1] == id4[1]) && (stateData.sentence[2] == id4[2])) {
+                //HIT
+                //GuessData
+                if (sscanf(stateData.sentence, PAYLOAD_TEMPLATE_HIT, &data1, &data2, &data3) == 3) {
+                    gData->row = data1;
+                    gData->col = data2;
+                    gData->hit = data3;
+                    return PROTOCOL_PARSED_HIT_MESSAGE;
                 } else {
                     return PROTOCOL_PARSING_FAILURE;
                 }
@@ -225,6 +258,8 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
             return PROTOCOL_PARSING_FAILURE;
         }
         break;
+    default:
+        return PROTOCOL_PARSING_FAILURE;
     }
 }
 
@@ -244,12 +279,12 @@ void ProtocolGenerateNegotiationData(NegotiationData *data)
     //generate data and encryption key
     data->guess = (rand() & 0xFFFF);
     data->encryptionKey = (rand() & 0xFFFF);
-    
+
     //generate encrypted guess
     data->encryptedGuess = (data->encryptionKey) ^ (data->guess);
-    
+
     //generate hash
-    data->hash = (data->encryptionKey & 0x00FF) ^ (data->encryptionKey >> 8) 
+    data->hash = (data->encryptionKey & 0x00FF) ^ (data->encryptionKey >> 8)
             ^ (data->guess & 0x00FF) ^ (data->guess >> 8);
 }
 
@@ -265,15 +300,15 @@ uint8_t ProtocolValidateNegotiationData(const NegotiationData *data)
 {
     int counter = 0;
     //verify that the encrypted guess is actually the guess encrypted with the encryption key
-    if((data->encryptedGuess ^ data->encryptionKey) == data->guess){
+    if ((data->encryptedGuess ^ data->encryptionKey) == data->guess) {
         counter++;
     }
     //verify that the hash is actually the xors of all the bytes of the encryption key and guess
-    if(data->hash == ((data->encryptionKey & 0x00FF) ^ (data->encryptionKey >> 8) 
-            ^ (data->guess & 0x00FF) ^ (data->guess >> 8))){
+    if (data->hash == ((data->encryptionKey & 0x00FF) ^ (data->encryptionKey >> 8)
+            ^ (data->guess & 0x00FF) ^ (data->guess >> 8))) {
         counter++;
     }
-    if(counter == 2){
+    if (counter == 2) {
         return TRUE;
     } else {
         return FALSE;
@@ -295,19 +330,23 @@ uint8_t ProtocolValidateNegotiationData(const NegotiationData *data)
  */
 TurnOrder ProtocolGetTurnOrder(const NegotiationData *myData, const NegotiationData *oppData)
 {
+    //order algorithm data
     uint16_t temp = myData->encryptionKey ^ oppData->encryptionKey;
-    if((temp & 0x0001) != 0){
-        if(myData->guess > oppData->guess){
+    //check if the algorithm data's LSB is 1 or 0
+    if ((temp & 0x0001) != 0) {
+        //case for LSB == 1
+        if (myData->guess > oppData->guess) {
             return TURN_ORDER_START;
-        } else if (myData->guess < oppData->guess){
+        } else if (myData->guess < oppData->guess) {
             return TURN_ORDER_DEFER;
         } else {
             return TURN_ORDER_TIE;
         }
     } else {
-        if(myData->guess > oppData->guess){
+        //case for LSB == 0
+        if (myData->guess > oppData->guess) {
             return TURN_ORDER_DEFER;
-        } else if (myData->guess < oppData->guess){
+        } else if (myData->guess < oppData->guess) {
             return TURN_ORDER_START;
         } else {
             return TURN_ORDER_TIE;

@@ -24,6 +24,8 @@ static ProtocolParserStatus parsingStatus;
 static AgentEvent agentStatus;
 static uint8_t boatStatus;
 
+static FieldOledTurn playerTurn;
+
 static AgentState agentState = AGENT_STATE_GENERATE_NEG_DATA;
 
 static AgentEvent ProtocolToAgentEvent(ProtocolParserStatus input);
@@ -110,13 +112,16 @@ int AgentRun(char in, char *outBuffer)
                     agentState = AGENT_STATE_INVALID;
                 } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_START) {
                     //set turn to MINE
-                    
+                    playerTurn = FIELD_OLED_TURN_MINE;
                     //update screen
+                    FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                     agentState = AGENT_STATE_SEND_GUESS;
+                    
                 } else if (ProtocolGetTurnOrder(&myData, &enemyData) == TURN_ORDER_DEFER) {
                     //set turn to THEIRS
-                    
+                    playerTurn = FIELD_OLED_TURN_THEIRS;
                     //update screen
+                    FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                     agentState = AGENT_STATE_WAIT_FOR_GUESS;
                 }
             } else {
@@ -149,14 +154,18 @@ int AgentRun(char in, char *outBuffer)
                 //update knowledge of enemy field
                 FieldUpdateKnowledge(&enemyField, &myGuess);
                 //set turn to theirs
-                
+                playerTurn = FIELD_OLED_TURN_THEIRS;
                 //update screen
+                FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                 agentState = AGENT_STATE_WAIT_FOR_GUESS;
+                return 0;
             } else {
                 //set turn to NONE
-                
+                playerTurn = FIELD_OLED_TURN_NONE;
                 //update screen
+                FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                 agentState = AGENT_STATE_WON;
+                return 0;
             }
         }
         break;
@@ -164,23 +173,25 @@ int AgentRun(char in, char *outBuffer)
         parsingStatus = ProtocolDecode(in, &enemyData, &enemyGuess);
         agentStatus = ProtocolToAgentEvent(parsingStatus);
         boatStatus = AgentGetStatus();
+        FieldOledDrawScreen(&myField, &enemyField, playerTurn);
+        
         if (agentStatus == AGENT_EVENT_RECEIVED_COO_MESSAGE) {
             //register attack
             FieldRegisterEnemyAttack(&myField, &enemyGuess);
             //check boat status
             if (boatStatus == 0) {
                 //set turn to NONE
-                
+                playerTurn = FIELD_OLED_TURN_NONE;
                 //update screen
-                
+                FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                 //send hit message
                 return ProtocolEncodeHitMessage(outBuffer, &enemyGuess);
                 agentState = AGENT_STATE_LOST;
             } else {
                 //set turn to MINE
-                
+                playerTurn = FIELD_OLED_TURN_MINE;
                 //update screen
-                
+                FieldOledDrawScreen(&myField, &enemyField, playerTurn);
                 //send hit message
                 return ProtocolEncodeHitMessage(outBuffer, &enemyGuess);
                 agentState = AGENT_STATE_SEND_GUESS;
