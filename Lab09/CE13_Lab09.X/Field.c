@@ -109,309 +109,87 @@ FieldPosition FieldSetLocation(Field *f, uint8_t row, uint8_t col, FieldPosition
  */
 uint8_t FieldAddBoat(Field *f, uint8_t row, uint8_t col, BoatDirection dir, BoatType type)
 {
-    // Set variables to hold values
-    uint8_t diff;
-    uint8_t currow;
-    uint8_t curcol;
+    // Counter
+    int i; 
 
-    // Switch statement for 
-    switch (type) {
+    // Makes sure initial spaces on the field for boat are empty
+    if (f->field[row][col] != FIELD_POSITION_EMPTY) {
+        return FALSE;
+    } 
+    
+    // Checks all other cases
+    else {
+        // Check if all boat spaces are clear
+        // Place boat spots accordingly
+        if (dir == FIELD_BOAT_DIRECTION_NORTH) {
+            for (i = 0; i < (type + 3); i++) {
+                // Check if there is enough space on the field
+                if ((row - i) < 0) {
+                    return FALSE;
+                }
+                // Check if there are boats in the way
+                if (f->field[row - i][col] != FIELD_POSITION_EMPTY) {
+                    return FALSE;
+                }
+            }
+            // Places the boat
+            for (i = 0; i < (type + 3); i++) {
+                f->field[row][col] = type + 1;
+                row--;
+            }
+            return TRUE;
+        } 
         
-    // Case for the small boat
-    case FIELD_BOAT_SMALL:
-        switch (dir) {
-            
-        // North case
-        case FIELD_BOAT_DIRECTION_NORTH:
-            diff = row - FIELD_BOAT_LIVES_SMALL;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (currow = row; currow < diff; currow--) {
-                if (f->field[currow][col]) {
+        // Case for South
+        else if (dir == FIELD_BOAT_DIRECTION_SOUTH) {
+            for (i = 0; i < (type + 3); i++) {
+                if (((row + i) + 1) > FIELD_ROWS) {
+                    return FALSE;
+                }
+                if (f->field[row + i][col] != FIELD_POSITION_EMPTY) {
                     return FALSE;
                 }
             }
-            for (currow = row; currow > diff; currow--) {
-                f->field[currow][col] = FIELD_POSITION_SMALL_BOAT;
+            for (i = 0; i < (type + 3); i++) {
+                f->field[row][col] = type + 1;
+                row++;
             }
             return TRUE;
-            break;
-            
-        // East case
-        case FIELD_BOAT_DIRECTION_EAST:
-            diff = col + FIELD_BOAT_LIVES_SMALL;
-            if (diff > FIELD_COLS) {
-                return FALSE;
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                f->field[row][curcol] = FIELD_POSITION_SMALL_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // South case    
-        case FIELD_BOAT_DIRECTION_SOUTH:
-            diff = row + FIELD_BOAT_LIVES_SMALL;
-            if (diff > FIELD_ROWS) {
-                return FALSE;
-            }
-            for (currow = row; currow < diff; currow++) {
-                if (f->field[currow][col]) {
-                    return FALSE;
-                }
-            }
-            for (currow = row; currow < diff; currow++) {
-                f->field[currow][col] = FIELD_POSITION_SMALL_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // West case    
-        case FIELD_BOAT_DIRECTION_WEST:
-            diff = col - FIELD_BOAT_LIVES_SMALL;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                f->field[row][curcol] = FIELD_POSITION_SMALL_BOAT;
-            }
-            return TRUE;
-            break;
-        }
-        break;
+        } 
         
-    // Case for the medium boat
-    case FIELD_BOAT_MEDIUM:
-        switch (dir) {
-            
-        // North case
-        case FIELD_BOAT_DIRECTION_NORTH:
-            diff = row - FIELD_BOAT_LIVES_MEDIUM;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (currow = row; currow > diff; currow--) {
-                if (f->field[currow][col]) {
+        // Case for East
+        else if (dir == FIELD_BOAT_DIRECTION_EAST) {
+            for (i = 0; i < (type + 3); i++) {
+                if (((col + i) + 1) > FIELD_COLS) {
+                    return FALSE;
+                }
+                if (f->field[row][col + i] != FIELD_POSITION_EMPTY) {
                     return FALSE;
                 }
             }
-            for (currow = row; currow > diff; currow--) {
-                f->field[currow][col] = FIELD_POSITION_MEDIUM_BOAT;
+            for (i = 0; i < (type + 3); i++) {
+                f->field[row][col] = type + 1;
+                col++;
             }
             return TRUE;
-            break;
-            
-        // East case    
-        case FIELD_BOAT_DIRECTION_EAST:
-            diff = col + FIELD_BOAT_LIVES_MEDIUM;
-            if (diff > FIELD_COLS) {
-                return FALSE;
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                f->field[row][curcol] = FIELD_POSITION_MEDIUM_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // South case    
-        case FIELD_BOAT_DIRECTION_SOUTH:
-            diff = row + FIELD_BOAT_LIVES_MEDIUM;
-            if (diff > FIELD_ROWS) {
-                return FALSE;
-            }
-            for (currow = row; currow < diff; currow++) {
-                if (f->field[currow][col]) {
-                    return FALSE;
-                }
-            }
-            for (currow = row; currow < diff; currow++) {
-                f->field[currow][col] = FIELD_POSITION_MEDIUM_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // West case    
-        case FIELD_BOAT_DIRECTION_WEST:
-            diff = col - FIELD_BOAT_LIVES_MEDIUM;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                f->field[row][curcol] = FIELD_POSITION_MEDIUM_BOAT;
-            }
-            return TRUE;
-            break;
-        }
-        break;
+        } 
         
-    // Case for the large boat
-    case FIELD_BOAT_LARGE:
-        switch (dir) {
-            
-        // North case
-        case FIELD_BOAT_DIRECTION_NORTH:
-            diff = row - FIELD_BOAT_LIVES_LARGE;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (currow = row; currow > diff; currow--) {
-                if (f->field[currow][col]) {
+        // Case for West
+        else if (dir == FIELD_BOAT_DIRECTION_WEST) {
+            for (i = 0; i < (type + 3); i++) {
+                if ((col - i) < 0) {
+                    return FALSE;
+                }
+                if (f->field[row][col - i] != FIELD_POSITION_EMPTY) {
                     return FALSE;
                 }
             }
-            for (currow = row; currow > diff; currow--) {
-                f->field[currow][col] = FIELD_POSITION_LARGE_BOAT;
+            for (i = 0; i < (type + 3); i++) {
+                f->field[row][col] = type + 1;
+                col--;
             }
             return TRUE;
-            break;
-            
-        // East case    
-        case FIELD_BOAT_DIRECTION_EAST:
-            diff = col + FIELD_BOAT_LIVES_LARGE;
-            if (diff > FIELD_COLS) {
-                return FALSE;
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                f->field[row][curcol] = FIELD_POSITION_LARGE_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // South case    
-        case FIELD_BOAT_DIRECTION_SOUTH:
-            diff = row + FIELD_BOAT_LIVES_LARGE;
-            if (diff > FIELD_ROWS) {
-                return FALSE;
-            }
-            for (currow = row; currow < diff; currow++) {
-                if (f->field[currow][col]) {
-                    return FALSE;
-                }
-            }
-            for (currow = row; currow < diff; currow++) {
-                f->field[currow][col] = FIELD_POSITION_LARGE_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // West case    
-        case FIELD_BOAT_DIRECTION_WEST:
-            diff = col - FIELD_BOAT_LIVES_LARGE;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                f->field[row][curcol] = FIELD_POSITION_LARGE_BOAT;
-            }
-            return TRUE;
-            break;
         }
-        break;
-        
-    // Case for the huge boat
-    case FIELD_BOAT_HUGE:
-        switch (dir) {
-            
-        // North case
-        case FIELD_BOAT_DIRECTION_NORTH:
-            diff = row - FIELD_BOAT_LIVES_HUGE;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (currow = row; currow > diff; currow--) {
-                if (f->field[currow][col]) {
-                    return FALSE;
-                }
-            }
-            for (currow = row; currow > diff; currow--) {
-                f->field[currow][col] = FIELD_POSITION_HUGE_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // East case    
-        case FIELD_BOAT_DIRECTION_EAST:
-            diff = col + FIELD_BOAT_LIVES_HUGE;
-            if (diff > FIELD_COLS) {
-                return FALSE;
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol < diff; curcol++) {
-                f->field[row][curcol] = FIELD_POSITION_HUGE_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // South case    
-        case FIELD_BOAT_DIRECTION_SOUTH:
-            diff = row + FIELD_BOAT_LIVES_HUGE;
-            if (diff > FIELD_ROWS) {
-                return FALSE;
-            }
-            for (currow = row; currow < diff; currow++) {
-                if (f->field[currow][col]) {
-                    return FALSE;
-                }
-            }
-            for (currow = row; currow < diff; currow++) {
-                f->field[currow][col] = FIELD_POSITION_HUGE_BOAT;
-            }
-            return TRUE;
-            break;
-            
-        // West case    
-        case FIELD_BOAT_DIRECTION_WEST:
-            diff = col - FIELD_BOAT_LIVES_HUGE;
-            if (diff < -1) {
-                return FALSE;
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                if (f->field[row][curcol]) {
-                    return FALSE;
-                }
-            }
-            for (curcol = col; curcol > diff; curcol--) {
-                f->field[row][curcol] = FIELD_POSITION_HUGE_BOAT;
-            }
-            return TRUE;
-            break;
-        }
-        break;
     }
     return FALSE;
 }
