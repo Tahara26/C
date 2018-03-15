@@ -28,6 +28,12 @@ typedef struct StateData {
     uint8_t checksum;
 } StateData;
 
+//state data struct
+static StateData stateData;
+
+//arrays for testing message ID
+static char id1[] = {'D', 'E', 'T'}, id2[] = {'C', 'H', 'A'}, id3[] = {'C', 'O', 'O'}, id4[] = {'H', 'I', 'T'};
+
 static uint8_t GetStringChecksum(char *);
 static uint8_t AsciiConvert(char);
 
@@ -46,17 +52,17 @@ int ProtocolEncodeCooMessage(char *message, const GuessData *data)
 {
     //create temporary values for storage into the message
     char temp[PROTOCOL_MAX_PAYLOAD_LEN];
-    uint8_t checksum;
+    uint8_t checksum = 0;
 
     //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_COO, data->row, data->col);
 
     //generate the checksum
     checksum = GetStringChecksum(temp);
-
+    
     //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
-    return SUCCESS;
+    return strlen(message);
 }
 
 /**
@@ -66,7 +72,7 @@ int ProtocolEncodeHitMessage(char *message, const GuessData *data)
 {
     //create temporary values for storage into the message
     char temp[PROTOCOL_MAX_PAYLOAD_LEN];
-    uint8_t checksum;
+    uint8_t checksum = 0;
 
     //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_HIT, data->row, data->col, data->hit);
@@ -76,7 +82,7 @@ int ProtocolEncodeHitMessage(char *message, const GuessData *data)
 
     //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
-    return SUCCESS;
+    return strlen(message);
 }
 
 /**
@@ -86,7 +92,7 @@ int ProtocolEncodeChaMessage(char *message, const NegotiationData *data)
 {
     //create temporary values for storage into the message
     char temp[PROTOCOL_MAX_PAYLOAD_LEN];
-    uint8_t checksum;
+    uint8_t checksum = 0;
 
     //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_CHA, data->encryptedGuess, data->hash);
@@ -96,7 +102,7 @@ int ProtocolEncodeChaMessage(char *message, const NegotiationData *data)
 
     //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
-    return SUCCESS;
+    return strlen(message);
 }
 
 /**
@@ -106,7 +112,7 @@ int ProtocolEncodeDetMessage(char *message, const NegotiationData *data)
 {
     //create temporary values for storage into the message
     char temp[PROTOCOL_MAX_PAYLOAD_LEN];
-    uint8_t checksum;
+    uint8_t checksum = 0;
 
     //generate the payload
     sprintf(temp, PAYLOAD_TEMPLATE_DET, data->guess, data->encryptionKey);
@@ -116,7 +122,7 @@ int ProtocolEncodeDetMessage(char *message, const NegotiationData *data)
 
     //generate the message
     sprintf(message, MESSAGE_TEMPLATE, temp, checksum);
-    return SUCCESS;
+    return strlen(message);
 }
 
 /**
@@ -138,11 +144,7 @@ int ProtocolEncodeDetMessage(char *message, const NegotiationData *data)
  */
 ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *gData)
 {
-    //char arrays for testing MSG_ID
-    char id1[] = {'D', 'E', 'T'}, id2[] = {'C', 'H', 'A'}, id3[] = {'C', 'O', 'O'}, id4[] = {'H', 'I', 'T'};
-    //state data struct
-    static StateData stateData;
-
+    //printf("%c ", in);
     switch (stateData.state) {
     case WAITING:
         //check for $ character
@@ -162,6 +164,7 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
             return PROTOCOL_PARSING_GOOD;
         } else {
             //case for non-asterisk character
+            //printf("   %c", in);
             stateData.sentence[stateData.index] = in;
             (stateData.index)++;
             return PROTOCOL_PARSING_GOOD;
@@ -179,6 +182,8 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
         } else {
             //case if character is not valid
             stateData.state = WAITING;
+            //            printf("\n first character of checksum:%c", in);
+            //            printf("\nfailing first checksum");
             return PROTOCOL_PARSING_FAILURE;
         }
         break;
@@ -195,10 +200,13 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
             } else {
                 //if checksum matching does not pass
                 stateData.state = WAITING;
+                //                printf("\ncalculated checksum:%x", stateData.checksum);
+                //                printf("\nfailing second checksum");
                 return PROTOCOL_PARSING_FAILURE;
             }
         } else {
             stateData.state = WAITING;
+            //            printf("\nnot valid ascii for second digit");
             return PROTOCOL_PARSING_FAILURE;
         }
         break;
@@ -216,6 +224,7 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                     return PROTOCOL_PARSED_DET_MESSAGE;
                 } else {
                     stateData.state = WAITING;
+                    //                    printf("\nscanf 1 failed");
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else if ((stateData.sentence[0] == id2[0]) && (stateData.sentence[1] == id2[1]) && (stateData.sentence[2] == id2[2])) {
@@ -228,6 +237,7 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                     return PROTOCOL_PARSED_CHA_MESSAGE;
                 } else {
                     stateData.state = WAITING;
+                    //                    printf("\nscanf 2 failed");
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else if ((stateData.sentence[0] == id3[0]) && (stateData.sentence[1] == id3[1]) && (stateData.sentence[2] == id3[2])) {
@@ -240,6 +250,7 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                     return PROTOCOL_PARSED_COO_MESSAGE;
                 } else {
                     stateData.state = WAITING;
+                    //                    printf("\nscanf 3 failed");
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else if ((stateData.sentence[0] == id4[0]) && (stateData.sentence[1] == id4[1]) && (stateData.sentence[2] == id4[2])) {
@@ -253,21 +264,25 @@ ProtocolParserStatus ProtocolDecode(char in, NegotiationData *nData, GuessData *
                     return PROTOCOL_PARSED_HIT_MESSAGE;
                 } else {
                     stateData.state = WAITING;
+                    //                    printf("\nscanf 4 failed");
                     return PROTOCOL_PARSING_FAILURE;
                 }
             } else {
                 //case for invalid MSG ID
                 stateData.state = WAITING;
+                //                printf("\nnot cha, coo, det, or hit");
                 return PROTOCOL_PARSING_FAILURE;
             }
         } else {
             //case for non-newline char
             stateData.state = WAITING;
+            //            printf("\nnot newline");
             return PROTOCOL_PARSING_FAILURE;
         }
         break;
     default:
         stateData.state = WAITING;
+        //        printf("\nstate failure");
         return PROTOCOL_PARSING_FAILURE;
     }
 }

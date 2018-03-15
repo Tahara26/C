@@ -53,7 +53,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>HumanAgent.o</linkerLibFileItem>
             <linkerLibFileItem>Lab9SupportLib.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
@@ -76,7 +75,7 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
-      <item path="ArtificialAgent.c" ex="true" overriding="false">
+      <item path="ArtificialAgent.c" ex="false" overriding="false">
         <C32>
         </C32>
         <C32-AR>
