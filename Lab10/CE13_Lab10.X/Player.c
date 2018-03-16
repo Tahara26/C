@@ -7,7 +7,7 @@
 
 #include "Game.h"
 #include "Player.h"
-#include "UnixBOARD.h"
+#include "UNIXBOARD.h"
 
 #include <stdio.h>
 #include <stdint.h>

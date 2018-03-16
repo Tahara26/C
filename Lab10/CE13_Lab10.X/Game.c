@@ -7,7 +7,7 @@
 
 #include "Game.h"
 #include "Player.h"
-#include "UnixBOARD.h"
+#include "UNIXBOARD.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -17,8 +17,8 @@
 #define FILE_TEMPLATE "RoomFiles/room%d.txt"
 
 static struct Room {
-    char Title[GAME_MAX_ROOM_TITLE_LENGTH + 1];
-    char Description[GAME_MAX_ROOM_DESC_LENGTH + 1];
+    char title[GAME_MAX_ROOM_TITLE_LENGTH + 1];
+    char desc[GAME_MAX_ROOM_DESC_LENGTH + 1];
     uint8_t RoomNumber;
     uint8_t Item;
     uint8_t Exit[4];

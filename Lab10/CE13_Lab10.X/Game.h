@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "UnixBOARD.h"
+#include "UNIXBOARD.h"
 
 #include <stdint.h>
 

@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 //CMPE13 Support Library
-#include "UnixBOARD.h"
+#include "UNIXBOARD.h"
 #include "Game.h"
 #include "Player.h"
 
