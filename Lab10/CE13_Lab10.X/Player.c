@@ -8,7 +8,6 @@
 #include "Game.h"
 #include "Player.h"
 #include "UnixBOARD.h"
-#include "xc.h"
 
 #include <stdio.h>
 #include <stdint.h>

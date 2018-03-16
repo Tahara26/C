@@ -3,7 +3,7 @@
 
 
 
-#include "UNIXBOARD.h"
+#include "UnixBOARD.h"
 #include <stdint.h>
 // Define how big the player's inventory is.
 #define INVENTORY_SIZE 4
