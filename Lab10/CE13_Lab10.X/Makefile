@@ -1,4 +1,4 @@
-CFLAGS = -g -wall -std=c99
+CFLAGS = -g -Wall -std=c99
 
 all:rpg
 
