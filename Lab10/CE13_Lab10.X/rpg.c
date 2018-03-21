@@ -86,10 +86,9 @@ static void UpdateScreen(void)
     } else {
         printf("\033[31m");
     }
-    printf("North");
+    printf("North\n");
     
     // West 
-    printf("\033E");
     if (exits & GAME_ROOM_EXIT_WEST_EXISTS) {
         printf("\033[32m");
     } else {
@@ -104,18 +103,16 @@ static void UpdateScreen(void)
     } else {
         printf("\033[31m");
     }
-    printf("East");
+    printf("East\n");
     
     // South
-    printf("\033E");
     printf("\033[8C");
     if (exits & GAME_ROOM_EXIT_SOUTH_EXISTS) {
         printf("\033[32m");
     } else {
         printf("\033[31m");
     }
-    printf("South");
-    printf("\033E");
+    printf("South\n");
     printf("\033[37m");
     
     // Prints prompt below the directions
