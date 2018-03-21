@@ -113,7 +113,7 @@ static void UpdateScreen(void)
         printf("\033[31m");
     }
     printf("South\n");
-    printf("\033[37m");
+    printf("\033[97m");
     
     // Prints prompt below the directions
     printf("Select Direction by using N, E, S, or W\n");
