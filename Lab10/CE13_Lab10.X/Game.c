@@ -16,15 +16,22 @@
 
 #define FILE_TEMPLATE "RoomFiles/room%d.txt"
 
-static struct Room {
+typedef struct Room {
     char title[GAME_MAX_ROOM_TITLE_LENGTH + 1];
-    char desc[GAME_MAX_ROOM_DESC_LENGTH + 1];
+    char description[GAME_MAX_ROOM_DESC_LENGTH + 1];
     uint8_t RoomNumber;
-    uint8_t Item;
+    uint8_t Item[INVENTORY_SIZE];
     uint8_t Exit[4];
+    uint8_t Length;
     char File[24];
-    char RoomInventory[4];
-} RPGRoom;
+    uint8_t RoomInventory[INVENTORY_SIZE];
+} Room;
+
+static Room RPGRoom;
+
+static void RoomUpdate(void);
+
+static FILE *file;
 
 /**
  * These function transitions between rooms. Each call should return SUCCESS if the current room has
@@ -33,29 +40,57 @@ static struct Room {
  * @return SUCCESS if the room CAN be navigated to and changing the current room to that new room
  *         succeeded.
  */
-int GameGoNorth(void){
-    
+int GameGoNorth(void)
+{
+    if (GAME_ROOM_EXIT_NORTH_EXISTS & GameGetCurrentRoomExits()) {
+        RPGRoom.RoomNumber = RPGRoom.Exit[0];
+        RoomUpdate();
+        return SUCCESS;
+    } else {
+        return STANDARD_ERROR;
+    }
 }
 
 /**
  * @see GameGoNorth
  */
-int GameGoEast(void){
-    
+int GameGoEast(void)
+{
+    if (GAME_ROOM_EXIT_EAST_EXISTS & GameGetCurrentRoomExits()) {
+        RPGRoom.RoomNumber = RPGRoom.Exit[1];
+        RoomUpdate();
+        return SUCCESS;
+    } else {
+        return STANDARD_ERROR;
+    }
 }
 
 /**
  * @see GameGoNorth
  */
-int GameGoSouth(void){
-    
+int GameGoSouth(void)
+{
+    if (GAME_ROOM_EXIT_SOUTH_EXISTS & GameGetCurrentRoomExits()) {
+        RPGRoom.RoomNumber = RPGRoom.Exit[2];
+        RoomUpdate();
+        return SUCCESS;
+    } else {
+        return STANDARD_ERROR;
+    }
 }
 
 /**
  * @see GameGoNorth
  */
-int GameGoWest(void){
-    
+int GameGoWest(void)
+{
+    if (GAME_ROOM_EXIT_WEST_EXISTS & GameGetCurrentRoomExits()) {
+        RPGRoom.RoomNumber = RPGRoom.Exit[3];
+        RoomUpdate();
+        return SUCCESS;
+    } else {
+        return STANDARD_ERROR;
+    }
 }
 
 /**
@@ -64,8 +99,17 @@ int GameGoWest(void){
  * and STANDARD_ERROR if it doesn't.
  * @return SUCCESS or STANDARD_ERROR
  */
-int GameInit(void){
-    
+int GameInit(void)
+{
+    RPGRoom.title[0] = '\0';
+    RPGRoom.description[0] = '\0';
+    RPGRoom.Exit[0] = STARTING_ROOM;
+    RPGRoom.Exit[1] = 0;
+    RPGRoom.Exit[2] = 0;
+    RPGRoom.Exit[3] = 0;
+    RPGRoom.RoomNumber = 0;
+    RPGRoom.File[0] = '\0';
+    return GameGoNorth();
 }
 
 /**
@@ -78,8 +122,10 @@ int GameInit(void){
  *         written into `title` will be this value + 1 to account for the NULL terminating
  *         character.
  */
-int GameGetCurrentRoomTitle(char *title){
-    
+int GameGetCurrentRoomTitle(char *title)
+{
+    sprintf(title, "%s", RPGRoom.title);
+    return strlen(title);
 }
 
 /**
@@ -93,8 +139,10 @@ int GameGetCurrentRoomTitle(char *title){
  *          written into `desc` will be this value + 1 to account for the NULL terminating
  *          character.
  */
-int GameGetCurrentRoomDescription(char *desc){
-    
+int GameGetCurrentRoomDescription(char *desc)
+{
+    sprintf(desc, "%s", RPGRoom.description);
+    return strlen(desc);
 }
 
 /**
@@ -108,6 +156,110 @@ int GameGetCurrentRoomDescription(char *desc){
  *
  * @return a 4-bit bitfield signifying which exits are available to this room.
  */
-uint8_t GameGetCurrentRoomExits(void){
+uint8_t GameGetCurrentRoomExits(void)
+{
+    uint8_t exits = 0;
+    if (RPGRoom.Exit[0] != 0) {
+        exits |= GAME_ROOM_EXIT_NORTH_EXISTS;
+    }
+    if (RPGRoom.Exit[1] != 0) {
+        exits |= GAME_ROOM_EXIT_EAST_EXISTS;
+    }
+    if (RPGRoom.Exit[2] != 0) {
+        exits |= GAME_ROOM_EXIT_SOUTH_EXISTS;
+    }
+    if (RPGRoom.Exit[3] != 0) {
+        exits |= GAME_ROOM_EXIT_WEST_EXISTS;
+    }
+    return exits;
+}
+
+
+// Helper function for updating rooms 
+static void RoomUpdate(void)
+{
+    // Setting up all variables
+    static char storevalue = 0;
+    static int i;
+    static char garbage[GAME_MAX_ROOM_DESC_LENGTH];
+    static uint8_t flag = 0;
+
+    // Clears the title and description each time
+    memset(RPGRoom.title, '\0', sizeof (RPGRoom.title));
+    memset(RPGRoom.description, '\0', sizeof (RPGRoom.description));
+
+    // Opens the file
+    sprintf(RPGRoom.File, FILE_TEMPLATE, RPGRoom.RoomNumber);
+    file = fopen(RPGRoom.File, "rb");
+
+    // Title
+    storevalue = fgetc(file);
+    RPGRoom.Length = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+    fread(RPGRoom.title, RPGRoom.Length, 1, file);
+    for (i = 0; i < RPGRoom.Length; i++) {
+        RPGRoom.title[i] = RPGRoom.title[i] ^ ((uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+    }
+
+    // Items Needed
+    while (1) {
+        storevalue = fgetc(file);
+        RPGRoom.Length = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+        if (RPGRoom.Length == 0) {
+            break;
+        } else {
+            for (i = 0; i < RPGRoom.Length; i++) {
+                storevalue = fgetc(file);
+                RPGRoom.Item[i] = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+            }
+            for (i = 0; i < RPGRoom.Length; i++) {
+                if (FindInInventory(RPGRoom.Item[i]) == SUCCESS) {
+                    flag = 0;
+                } else {
+                    flag = 1;
+                    fread(garbage, (RPGRoom.Length) - (i + 1), 1, file);
+                    storevalue = fgetc(file);
+                    RPGRoom.Length = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+                    fread(garbage, RPGRoom.Length, 1, file);
+                    storevalue = fgetc(file);
+                    RPGRoom.Length = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+                    fread(garbage, RPGRoom.Length, 1, file);
+                    fread(garbage, 4, 1, file);
+                    break;
+                }
+            }
+            if (flag == 0) {
+                break;
+            }
+        }
+    }
+
+    // Description
+    storevalue = fgetc(file);
+    RPGRoom.Length = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+    fread(RPGRoom.description, RPGRoom.Length, 1, file);
+    for (i = 0; i < RPGRoom.Length; i++) {
+        RPGRoom.description[i] = RPGRoom.description[i] ^ ((uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+    }
+
+    // Items inside room
+    storevalue = fgetc(file);
+    RPGRoom.Length = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+    if (RPGRoom.Length == 0) {
+        ;
+    } else {
+        for (i = 0; i < RPGRoom.Length; i++) {
+        storevalue = fgetc(file);
+        AddToInventory(RPGRoom.RoomInventory[i]);
+        }
+    }
     
+    // Exits
+    for (i = 0; i < 4; i++) {
+        storevalue = fgetc(file);
+        RPGRoom.Exit[i] = (uint8_t) (storevalue ^ (uint8_t) (RPGRoom.RoomNumber + DECRYPTION_BASE_KEY));
+    }
+    
+    // Closes file
+    fclose(file);
+    return;
 }

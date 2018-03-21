@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 static int i;
-char inventory[INVENTORY_SIZE];
+uint8_t inventory[INVENTORY_SIZE];
 
 /**
  * Adds the specified item to the player's inventory if the inventory isn't full.
@@ -25,12 +25,14 @@ char inventory[INVENTORY_SIZE];
 int AddToInventory(uint8_t item)
 {
     for (i = 0; i < INVENTORY_SIZE; i++) {
-        inventory[i] = item;
-        return SUCCESS;
+        if(inventory[i] == 0){
+            if(inventory[i] != item){
+                inventory[i] = item;
+                return SUCCESS;
+            }
+        }
     }
-    if (inventory == 0) {
-        return STANDARD_ERROR;
-    }
+    return STANDARD_ERROR;
 }
 
 /**
@@ -47,4 +49,5 @@ int FindInInventory(uint8_t item)
             return STANDARD_ERROR;
         }
     }
+    return STANDARD_ERROR;
 }
